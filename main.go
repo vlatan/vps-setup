@@ -12,17 +12,22 @@ import (
 
 func main() {
 
-	root, err := os.OpenRoot("/")
+	etc, err := os.OpenRoot("/etc")
 	if err != nil {
 		panic(err)
 	}
-	defer root.Close()
-
-	if err = settings.SetNeedRestart(root); err != nil {
-		panic(err)
-	}
+	defer etc.Close()
 
 	scanner := bufio.NewScanner(os.Stdin)
-	settings.ChangeSwappiness(scanner)
 
+	callables := []func() error{
+		func() error { return settings.SetNeedRestart(etc) },
+		func() error { return settings.ChangeSwappiness(scanner, etc) },
+	}
+
+	for _, callable := range callables {
+		if err = callable(); err != nil {
+			panic(err)
+		}
+	}
 }

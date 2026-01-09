@@ -12,18 +12,18 @@ import (
 // SetNeedRestart creates a new config file /etc/needrestart/conf.d/no-prompt.conf
 // Adds $nrconf{restart} = 'a'; to that file.
 // This will set services to automatically restart after update/upgrade.
-func SetNeedRestart(root *os.Root) error {
+func SetNeedRestart(etc *os.Root) error {
 	msg := colors.Yellow("Seting up services autorestart...")
 	fmt.Println(msg)
 
 	// Creates dirs that do not exist in the file path
-	name := "etc/needrestart/conf.d/no-prompt.conf"
-	if err := root.MkdirAll(filepath.Dir(name), 0755); err != nil {
+	name := "needrestart/conf.d/no-prompt.conf"
+	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
 		return err
 	}
 
 	data := "$nrconf{restart} = 'a';\n"
-	if err := root.WriteFile(name, []byte(data), 0644); err != nil {
+	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
 		return err
 	}
 
