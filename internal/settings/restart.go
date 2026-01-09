@@ -16,7 +16,7 @@ func SetNeedRestart(etc *os.Root) error {
 	msg := colors.Yellow("Seting up services autorestart...")
 	fmt.Println(msg)
 
-	// Creates dirs that do not exist in the file path
+	// Create dirs that do not exist in the file path
 	name := "needrestart/conf.d/no-prompt.conf"
 	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
 		return err

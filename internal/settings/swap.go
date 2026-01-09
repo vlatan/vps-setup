@@ -56,8 +56,8 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 	defer file.Close()
 
 	// Append line to the file
-	line := fmt.Sprintf("\nvm.swappiness = %s\n", swappiness)
-	if _, err := file.WriteString(line); err != nil {
+	data := fmt.Sprintf("\nvm.swappiness = %s\n", swappiness)
+	if _, err := file.WriteString(data); err != nil {
 		return err
 	}
 
