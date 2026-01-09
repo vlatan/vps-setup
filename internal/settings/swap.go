@@ -27,6 +27,7 @@ func ChangeSwappiness(scanner *bufio.Scanner) {
 		return n >= 0 && n <= 100
 	}
 
+	// Keep asking the question if swappiness is invalid
 	for {
 		if swappiness == "" {
 			swappiness = "20"

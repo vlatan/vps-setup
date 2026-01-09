@@ -1,0 +1,23 @@
+# extensions
+*.log
+*.db
+*.out
+
+
+# directories
+/.vscode/
+/bin/
+/tmp/
+.venv/
+certs/
+
+
+# dotfiles
+.env
+
+
+# tests
+cover.out
+cover.html
+coverage.html
+results.json
