@@ -45,6 +45,7 @@ const (
 	BgLightGrey BackgroundColor = "\033[47m"
 )
 
+// Yellow returns a given prompt in yellow color
 func Yellow(prompt string) string {
 	return fmt.Sprintf("%s%s%s", FgYellow, prompt, Reset)
 }

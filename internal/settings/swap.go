@@ -18,6 +18,7 @@ func ChangeSwappiness(scanner *bufio.Scanner) {
 	prompt = colors.Yellow(prompt)
 	swappiness := utils.AskQuestion(prompt, scanner)
 
+	// Function to check if the swappiness input is valid
 	valid := func(s string) bool {
 		n, err := strconv.Atoi(s)
 		if err != nil {
