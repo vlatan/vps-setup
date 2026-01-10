@@ -42,9 +42,6 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 		swappiness = utils.AskQuestion(prompt, scanner)
 	}
 
-	msg := fmt.Sprintf("Setting up system swappiness to %s...", swappiness)
-	fmt.Println(colors.Yellow(msg))
-
 	// Open file in append mode, create if it doesn't exist
 	flag := os.O_APPEND | os.O_CREATE | os.O_WRONLY
 	file, err := etc.OpenFile("sysctl.conf", flag, 0644)

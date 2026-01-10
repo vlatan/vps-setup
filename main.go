@@ -7,10 +7,9 @@ import (
 	"github.com/vlatan/vps-setup/internal/settings"
 )
 
-// Establish root for securely opening files
-// const root = "/"
-
 func main() {
+
+	scanner := bufio.NewScanner(os.Stdin)
 
 	etc, err := os.OpenRoot("/etc")
 	if err != nil {
@@ -18,16 +17,34 @@ func main() {
 	}
 	defer etc.Close()
 
-	scanner := bufio.NewScanner(os.Stdin)
+	jobs := []settings.Job{
+		{
+			Info:     "Enable services autorestart",
+			Callable: func() error { return settings.AutoRestart(etc) },
+		},
+		{
+			Info:     "Change the swappiness",
+			Callable: func() error { return settings.ChangeSwappiness(scanner, etc) },
+		},
+		{
+			Info:     "Attach to Ubuntu Pro",
+			Callable: func() error { return settings.AttachUbuntuPro(scanner) },
+		},
 
-	callables := []func() error{
-		func() error { return settings.SetNeedRestart(etc) },
-		func() error { return settings.ChangeSwappiness(scanner, etc) },
+		// "Set hostname",
+		// "Set timezone",
+		// "Add new user",
+		// "Harden SSH access",
+		// "Setup ufw (uncomplicated firewall)",
+		// "Install and configure Docker",
+		// "Install and configure Postfix",
+		// "Install and configure Fail2Ban",
+		// "Format the bash prompt",
+		// "Create bare git repository",
 	}
 
-	for _, callable := range callables {
-		if err = callable(); err != nil {
-			panic(err)
-		}
+	// Check whether to start
+	if err := settings.Start(scanner, jobs); err != nil {
+		panic(err)
 	}
 }

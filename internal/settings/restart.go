@@ -9,10 +9,10 @@ import (
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
-// SetNeedRestart creates a new config file /etc/needrestart/conf.d/no-prompt.conf
+// AutoRestart creates a new config file /etc/needrestart/conf.d/no-prompt.conf
 // Adds $nrconf{restart} = 'a'; to that file.
 // This will set services to automatically restart after update/upgrade.
-func SetNeedRestart(etc *os.Root) error {
+func AutoRestart(etc *os.Root) error {
 	msg := colors.Yellow("Seting up services autorestart...")
 	fmt.Println(msg)
 

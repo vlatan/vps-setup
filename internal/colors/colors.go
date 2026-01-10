@@ -7,13 +7,13 @@ type ForegroundColor string
 type BackgroundColor string
 
 const (
-	Reset         TextDecoration = "\033[0m"
-	Bold          TextDecoration = "\033[01m"
-	Disable       TextDecoration = "\033[02m"
-	Underline     TextDecoration = "\033[04m"
-	Reverse       TextDecoration = "\033[07m"
-	Strikethrough TextDecoration = "\033[09m"
-	Invisible     TextDecoration = "\033[08m"
+	TdReset         TextDecoration = "\033[0m"
+	TdBold          TextDecoration = "\033[01m"
+	TdDisable       TextDecoration = "\033[02m"
+	TdUnderline     TextDecoration = "\033[04m"
+	TdReverse       TextDecoration = "\033[07m"
+	TdStrikethrough TextDecoration = "\033[09m"
+	TdInvisible     TextDecoration = "\033[08m"
 )
 
 const (
@@ -47,5 +47,14 @@ const (
 
 // Yellow returns a given prompt in yellow color
 func Yellow(prompt string) string {
-	return fmt.Sprintf("%s%s%s", FgYellow, prompt, Reset)
+	return fmt.Sprintf("%s%s%s", FgYellow, prompt, TdReset)
+}
+
+// Red returns a given prompt in red color
+func Red(prompt string) string {
+	return fmt.Sprintf("%s%s%s", FgRed, prompt, TdReset)
+}
+
+func Bold(prompt string) string {
+	return fmt.Sprintf("%s%s%s", TdBold, prompt, TdReset)
 }
