@@ -1,6 +1,6 @@
 # VPS SETUP
 
-To test the script locally you can use Ubuntu's mutlipass.
+To test the script locally you can use Ubuntu's [mutlipass](https://github.com/canonical/multipass).
 
 **Install it**
 ```
@@ -22,7 +22,7 @@ multipass transfer bin/vps-setup test-bench:/home/ubuntu/
 multipass exec test-bench -- sudo /home/ubuntu/vps-setup
 ```
 
-**Check results, then Burn it down**
+**Burn it down**
 ```
 multipass delete test-bench
 multipass purge
