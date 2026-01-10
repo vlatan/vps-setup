@@ -34,8 +34,11 @@ func main() {
 			Info:     "Set hostname",
 			Callable: func() error { return settings.SetHostname(scanner) },
 		},
+		{
+			Info:     "Set timezone",
+			Callable: func() error { return settings.SetTimezone(scanner) },
+		},
 
-		// "Set timezone",
 		// "Add new user",
 		// "Harden SSH access",
 		// "Setup ufw (uncomplicated firewall)",
@@ -46,7 +49,7 @@ func main() {
 		// "Create bare git repository",
 	}
 
-	// Check whether to start
+	// Start the machine setup
 	if err := settings.Start(scanner, jobs); err != nil {
 		panic(err)
 	}
