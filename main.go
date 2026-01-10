@@ -9,6 +9,7 @@ import (
 
 func main() {
 
+	var username string
 	scanner := bufio.NewScanner(os.Stdin)
 
 	etc, err := os.OpenRoot("/etc")
@@ -38,8 +39,11 @@ func main() {
 			Info:     "Set timezone",
 			Callable: func() error { return settings.SetTimezone(scanner) },
 		},
+		{
+			Info:     "Add new user",
+			Callable: func() error { return settings.AddUser(&username, scanner) },
+		},
 
-		// "Add new user",
 		// "Harden SSH access",
 		// "Setup ufw (uncomplicated firewall)",
 		// "Install and configure Docker",
