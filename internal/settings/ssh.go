@@ -12,9 +12,9 @@ import (
 )
 
 // HardenSSH hardens the SSH config
-func HardenSSH(scanner *bufio.Scanner, etc *os.Root) error {
+func HardenSSH(target *string, scanner *bufio.Scanner, etc *os.Root) error {
 
-	var port string
+	var sshPort string
 	prompt := "On which PORT do you want to connect via SSH [enter for 22]: "
 	prompt = colors.Yellow(prompt)
 
@@ -29,14 +29,14 @@ func HardenSSH(scanner *bufio.Scanner, etc *os.Root) error {
 
 	// Keep asking the question if port is invalid
 	for {
-		port = utils.AskQuestion(prompt, scanner)
+		sshPort = utils.AskQuestion(prompt, scanner)
 
-		if port == "" {
-			port = "22"
+		if sshPort == "" {
+			sshPort = "22"
 			break
 		}
 
-		if valid(port) {
+		if valid(sshPort) {
 			break
 		}
 	}
@@ -48,7 +48,7 @@ func HardenSSH(scanner *bufio.Scanner, etc *os.Root) error {
 	}
 
 	// Write to the file
-	data := fmt.Sprintf("\nPort %s\nAddressFamily inet\nPermitRootLogin no\n", port)
+	data := fmt.Sprintf("\nPort %s\nAddressFamily inet\nPermitRootLogin no\n", sshPort)
 	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
 		return err
 	}
@@ -57,6 +57,9 @@ func HardenSSH(scanner *bufio.Scanner, etc *os.Root) error {
 	if err := utils.RunCommand("systemctl", "restart", "ssh"); err != nil {
 		return err
 	}
+
+	// Set SSH port to target
+	*target = sshPort
 
 	return nil
 }

@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	var username string
+	var username, sshPort string
 	scanner := bufio.NewScanner(os.Stdin)
 
 	etc, err := os.OpenRoot("/etc")
@@ -43,8 +43,11 @@ func main() {
 			Info:     "Add new user",
 			Callable: func() error { return settings.AddUser(&username, scanner) },
 		},
+		{
+			Info:     "Harden SSH access",
+			Callable: func() error { return settings.HardenSSH(&sshPort, scanner, etc) },
+		},
 
-		// "Harden SSH access",
 		// "Setup ufw (uncomplicated firewall)",
 		// "Install and configure Docker",
 		// "Install and configure Postfix",
