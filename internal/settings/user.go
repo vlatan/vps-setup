@@ -31,7 +31,7 @@ func AddUser(target *string, scanner *bufio.Scanner) error {
 		}
 	}
 
-	// Apply the username to target
+	// Set username to target
 	*target = username
 
 	return nil

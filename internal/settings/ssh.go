@@ -2,7 +2,9 @@ package settings
 
 import (
 	"bufio"
+	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/vlatan/vps-setup/internal/colors"
@@ -37,6 +39,23 @@ func HardenSSH(scanner *bufio.Scanner, etc *os.Root) error {
 		if valid(port) {
 			break
 		}
+	}
+
+	// Create dirs that do not exist in the file path
+	name := "ssh/sshd_config.d/harden.conf"
+	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to the file
+	data := fmt.Sprintf("\nPort %s\nAddressFamily inet\nPermitRootLogin no\n", port)
+	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
+		return err
+	}
+
+	// Restart SSH
+	if err := utils.RunCommand("systemctl", "restart", "ssh"); err != nil {
+		return err
 	}
 
 	return nil
