@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/vlatan/vps-setup/internal/colors"
@@ -42,21 +43,19 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 		}
 	}
 
-	// Open file in append mode, create if it doesn't exist
-	flag := os.O_APPEND | os.O_CREATE | os.O_WRONLY
-	file, err := etc.OpenFile("sysctl.conf", flag, 0644)
-
-	if err != nil {
+	// Create dirs that do not exist in the file path
+	name := "sysctl.d/99-my-swappiness.conf"
+	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
 		return err
 	}
 
-	defer file.Close()
-
-	// Append line to the file
-	data := fmt.Sprintf("\nvm.swappiness = %s\n", swappiness)
-	if _, err := file.WriteString(data); err != nil {
+	// Write to the file
+	data := fmt.Sprintf("vm.swappiness = %s\n", swappiness)
+	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
 		return err
 	}
 
-	return utils.RunCommand("sysctl", "-p")
+	// Load our config
+	confPath := filepath.Join(etc.Name(), name)
+	return utils.RunCommand("sysctl", "-p", confPath)
 }
