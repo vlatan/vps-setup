@@ -57,5 +57,6 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 
 	// Load our config
 	confPath := filepath.Join(etc.Name(), name)
-	return utils.RunCommand("sysctl", "-p", confPath)
+	cmd := utils.Command("sysctl", "-p", confPath)
+	return cmd.Run()
 }

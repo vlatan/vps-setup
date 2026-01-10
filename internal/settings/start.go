@@ -27,8 +27,8 @@ func Start(scanner *bufio.Scanner, jobs []Job) error {
 		fmt.Println(msg)
 	}
 
-	msg = "Continue? [y/n]: "
-	start := strings.ToLower(utils.AskQuestion(msg, scanner))
+	prompt := "Continue? [y/n]: "
+	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {
 		return nil
 	}

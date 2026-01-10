@@ -22,8 +22,9 @@ func AttachUbuntuPro(scanner *bufio.Scanner) error {
 		{"pro", "attach", token},
 	}
 
-	for _, cmd := range cmds {
-		if err := utils.RunCommand(cmd[0], cmd[1:]...); err != nil {
+	for _, cmdArgs := range cmds {
+		cmd := utils.Command(cmdArgs[0], cmdArgs[1:]...)
+		if err := cmd.Run(); err != nil {
 			return err
 		}
 	}

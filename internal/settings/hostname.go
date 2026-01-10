@@ -14,7 +14,8 @@ func SetHostname(scanner *bufio.Scanner) error {
 	for {
 		hostname := utils.AskQuestion(prompt, scanner)
 		if hostname != "" {
-			return utils.RunCommand("hostnamectl", "set-hostname", hostname)
+			cmd := utils.Command("hostnamectl", "set-hostname", hostname)
+			return cmd.Run()
 		}
 	}
 

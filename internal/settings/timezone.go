@@ -11,5 +11,6 @@ import (
 func SetTimezone(scanner *bufio.Scanner) error {
 	prompt := colors.Yellow("Provide timezone [Continent/City]: ")
 	timezone := utils.AskQuestion(prompt, scanner)
-	return utils.RunCommand("timedatectl", "set-timezone", timezone)
+	cmd := utils.Command("timedatectl", "set-timezone", timezone)
+	return cmd.Run()
 }

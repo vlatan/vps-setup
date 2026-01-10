@@ -23,7 +23,8 @@ func SetupFirewall(sshPort *string, scanner *bufio.Scanner, etc *os.Root) error 
 	fmt.Println("Source: " + url)
 
 	// Install ufw
-	if err := utils.RunCommand("apt-get", "install", "-y", "ufw"); err != nil {
+	cmd := utils.Command("apt-get", "install", "-y", "ufw")
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 
@@ -49,8 +50,9 @@ func SetupFirewall(sshPort *string, scanner *bufio.Scanner, etc *os.Root) error 
 		{"ufw", "logging", "on"},
 	}
 
-	for _, cmd := range cmds {
-		if err := utils.RunCommand(cmd[0], cmd[1:]...); err != nil {
+	for _, cmdArgs := range cmds {
+		cmd := utils.Command(cmdArgs[0], cmdArgs[1:]...)
+		if err := cmd.Run(); err != nil {
 			return err
 		}
 	}

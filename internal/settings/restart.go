@@ -27,7 +27,8 @@ func AutoRestart(etc *os.Root) error {
 		return err
 	}
 
-	if err := utils.RunCommand("apt-get", "update"); err != nil {
+	cmd := utils.Command("apt-get", "update")
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 

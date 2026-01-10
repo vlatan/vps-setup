@@ -5,8 +5,8 @@ import (
 	"os/exec"
 )
 
-// RunCommand runs a terminal command
-func RunCommand(name string, args ...string) error {
+// Command runs a terminal command
+func Command(name string, args ...string) *exec.Cmd {
 
 	// Init the command
 	cmd := exec.Command(name, args...)
@@ -17,5 +17,5 @@ func RunCommand(name string, args ...string) error {
 	cmd.Stdout = os.Stdout // Show the output
 	cmd.Stderr = os.Stderr // Show errors directly to the terminal
 
-	return cmd.Run()
+	return cmd
 }

@@ -54,7 +54,8 @@ func HardenSSH(target *string, scanner *bufio.Scanner, etc *os.Root) error {
 	}
 
 	// Restart SSH
-	if err := utils.RunCommand("systemctl", "restart", "ssh"); err != nil {
+	cmd := utils.Command("systemctl", "restart", "ssh")
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 
