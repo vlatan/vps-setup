@@ -34,6 +34,14 @@ func Start(scanner *bufio.Scanner, jobs []Job) error {
 	}
 
 	for _, job := range jobs {
+
+		if job.Callable == nil {
+			if job.Info != "" {
+				fmt.Printf("Skipping: %s", job.Info)
+			}
+			continue
+		}
+
 		if err := job.Callable(); err != nil {
 			return err
 		}
