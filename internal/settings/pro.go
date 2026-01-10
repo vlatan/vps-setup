@@ -18,7 +18,7 @@ func AttachUbuntuPro(scanner *bufio.Scanner) error {
 	}
 
 	cmds := [][]string{
-		{"apt", "install", "-y", "ubuntu-advantage-tools"},
+		{"apt-get", "install", "-y", "ubuntu-advantage-tools"},
 		{"pro", "attach", token},
 	}
 
