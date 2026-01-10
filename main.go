@@ -48,7 +48,8 @@ func main() {
 			Callable: func() error { return settings.HardenSSH(&sshPort, scanner, etc) },
 		},
 		{
-			Info: "Setup ufw (uncomplicated firewall)",
+			Info:     "Setup ufw (uncomplicated firewall)",
+			Callable: func() error { return settings.SetupFirewall(&sshPort, scanner, etc) },
 		},
 		{
 			Info: "Install and configure Docker",
