@@ -47,13 +47,24 @@ func main() {
 			Info:     "Harden SSH access",
 			Callable: func() error { return settings.HardenSSH(&sshPort, scanner, etc) },
 		},
-
-		// "Setup ufw (uncomplicated firewall)",
-		// "Install and configure Docker",
-		// "Install and configure Postfix",
-		// "Install and configure Fail2Ban",
-		// "Format the bash prompt",
-		// "Create bare git repository",
+		{
+			Info: "Setup ufw (uncomplicated firewall)",
+		},
+		{
+			Info: "Install and configure Docker",
+		},
+		{
+			Info: "Install and configure Postfix",
+		},
+		{
+			Info: "Install and configure Fail2Ban",
+		},
+		{
+			Info: "Format the bash prompt",
+		},
+		{
+			Info: "Create bare git repository",
+		},
 	}
 
 	// Start the machine setup

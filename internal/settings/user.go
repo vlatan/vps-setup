@@ -14,7 +14,7 @@ func AddUser(target *string, scanner *bufio.Scanner) error {
 	prompt := colors.Yellow("Provide username: ")
 
 	for {
-		username := utils.AskQuestion(prompt, scanner)
+		username = utils.AskQuestion(prompt, scanner)
 		if username != "" {
 			break
 		}

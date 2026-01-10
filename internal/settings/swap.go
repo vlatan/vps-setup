@@ -30,7 +30,7 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 
 	// Keep asking the question if swappiness is invalid
 	for {
-		swappiness := utils.AskQuestion(prompt, scanner)
+		swappiness = utils.AskQuestion(prompt, scanner)
 
 		if swappiness == "" {
 			swappiness = "20"
@@ -58,17 +58,5 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 		return err
 	}
 
-	cmds := [][]string{
-		{"sysctl", "-p"},
-		{"swapoff", "-a"},
-		{"swapon", "-a"},
-	}
-
-	for _, cmd := range cmds {
-		if err = utils.RunCommand(cmd[0], cmd[1]); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return utils.RunCommand("sysctl", "-p")
 }
