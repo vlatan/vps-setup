@@ -15,6 +15,7 @@ import (
 // the swap is going to begin to be utilized.
 func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 
+	var swappiness string
 	prompt := "Provide system swappines value 0-100 [enter for 20]: "
 	prompt = colors.Yellow(prompt)
 
@@ -28,9 +29,9 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 	}
 
 	// Keep asking the question if swappiness is invalid
-	var swappiness string
 	for {
 		swappiness := utils.AskQuestion(prompt, scanner)
+
 		if swappiness == "" {
 			swappiness = "20"
 			break
@@ -39,8 +40,6 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 		if valid(swappiness) {
 			break
 		}
-
-		swappiness = utils.AskQuestion(prompt, scanner)
 	}
 
 	// Open file in append mode, create if it doesn't exist
