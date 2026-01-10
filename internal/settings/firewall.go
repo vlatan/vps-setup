@@ -45,7 +45,7 @@ func SetupFirewall(sshPort *string, scanner *bufio.Scanner, etc *os.Root) error 
 		{"ufw", "allow", fmt.Sprintf("%s/tcp", *sshPort)},
 		{"ufw", "allow", "http/tcp"},
 		{"ufw", "allow", "https/tcp"},
-		{"ufw", "enable"},
+		{"ufw", "--force", "enable"},
 		{"ufw", "logging", "on"},
 	}
 
