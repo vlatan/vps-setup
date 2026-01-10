@@ -17,7 +17,6 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 
 	prompt := "Provide system swappines value 0-100 [enter for 20]: "
 	prompt = colors.Yellow(prompt)
-	swappiness := utils.AskQuestion(prompt, scanner)
 
 	// Function to check if the swappiness input is valid
 	valid := func(s string) bool {
@@ -29,7 +28,9 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 	}
 
 	// Keep asking the question if swappiness is invalid
+	var swappiness string
 	for {
+		swappiness := utils.AskQuestion(prompt, scanner)
 		if swappiness == "" {
 			swappiness = "20"
 			break

@@ -30,8 +30,11 @@ func main() {
 			Info:     "Attach to Ubuntu Pro",
 			Callable: func() error { return settings.AttachUbuntuPro(scanner) },
 		},
+		{
+			Info:     "Set hostname",
+			Callable: func() error { return settings.SetHostname(scanner) },
+		},
 
-		// "Set hostname",
 		// "Set timezone",
 		// "Add new user",
 		// "Harden SSH access",
