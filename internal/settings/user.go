@@ -21,7 +21,7 @@ func AddUser(target *string, scanner *bufio.Scanner) error {
 	}
 
 	cmds := [][]string{
-		{"adduser", username},
+		{"adduser", "--gecos", "", username},
 		{"adduser", username, "sudo"},
 	}
 
