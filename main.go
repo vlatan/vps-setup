@@ -58,7 +58,6 @@ func main() {
 		{
 			Info: "Install and configure Docker",
 		},
-
 		{
 			Info: "Install and configure Fail2Ban",
 		},
