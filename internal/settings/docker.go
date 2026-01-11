@@ -78,11 +78,6 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 			"docker-buildx-plugin",
 			"docker-compose-plugin",
 		},
-
-		// Manage Docker as a non-root user
-		// https://docs.docker.com/engine/install/linux-postinstall/
-		{"groupadd", "docker"},
-		{"usermod", "-aG", "docker", username},
 	}
 
 	for _, cmdArgs := range cmds {
@@ -92,8 +87,52 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 		}
 	}
 
+	// Manage Docker as a non-root user
+	// https://docs.docker.com/engine/install/linux-postinstall/
+
+	// Check if the docker group exists first
+	cmd = utils.Command("getent", "group", "docker")
+	if err := cmd.Run(); err != nil {
+		cmd = utils.Command("groupadd", "docker")
+		if err := cmd.Run(); err != nil {
+			return err
+		}
+	}
+
+	// Add user to docker group
+	cmd = exec.Command("usermod", "-aG", "docker", username)
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
 	// Configure logging
 	// https://docs.docker.com/config/containers/logging/local/
+
+	// Configure Docker log driver
+	dockerLogDriver := map[string]any{
+		"log-driver": "local",
+		"log-opts": map[string]string{
+			"max-size": "10m",
+		},
+	}
+
+	// Marshal to JSON with indentation
+	jsonData, err := json.MarshalIndent(dockerLogDriver, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	// Create dirs that do not exist in the file path
+	name := "docker/daemon.json"
+	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to the file
+	jsonData = append(jsonData, '\n')
+	if err := etc.WriteFile(name, jsonData, 0644); err != nil {
+		return err
+	}
 
 	// Configure rsyslog
 	rsyslogConf := []string{
@@ -105,7 +144,7 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 	}
 
 	// Create dirs that do not exist in the file path
-	name := "rsyslog.d/40-docker.conf"
+	name = "rsyslog.d/40-docker.conf"
 	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
 		return err
 	}
@@ -113,12 +152,6 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 	// Write to the file
 	rsyslogConfData := []byte(strings.Join(rsyslogConf, "\n") + "\n")
 	if err := etc.WriteFile(name, rsyslogConfData, 0644); err != nil {
-		return err
-	}
-
-	// Restart rsyslog
-	cmd = utils.Command("systemctl", "restart", "rsyslog")
-	if err := cmd.Run(); err != nil {
 		return err
 	}
 
@@ -150,42 +183,18 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 		return err
 	}
 
-	// Restart logrotate
-	cmd = utils.Command("systemctl", "restart", "logrotate")
-	if err := cmd.Run(); err != nil {
-		return err
+	// Restart services in this order to avoid race conditions
+	cmds = [][]string{
+		{"systemctl", "restart", "rsyslog"},
+		{"systemctl", "restart", "logrotate"},
+		{"systemctl", "restart", "docker"},
 	}
 
-	// Configure Docker log driver
-	dockerLogDriver := map[string]any{
-		"log-driver": "local",
-		"log-opts": map[string]string{
-			"max-size": "10m",
-		},
-	}
-
-	// Marshal to JSON with indentation
-	jsonData, err := json.MarshalIndent(dockerLogDriver, "", "    ")
-	if err != nil {
-		return err
-	}
-
-	// Create dirs that do not exist in the file path
-	name = "docker/daemon.json"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
-	// Write to the file
-	jsonData = append(jsonData, '\n')
-	if err := etc.WriteFile(name, jsonData, 0644); err != nil {
-		return err
-	}
-
-	// Restart Docker
-	cmd = utils.Command("systemctl", "restart", "docker")
-	if err := cmd.Run(); err != nil {
-		return err
+	for _, cmdArgs := range cmds {
+		cmd := utils.Command(cmdArgs[0], cmdArgs[1:]...)
+		if err := cmd.Run(); err != nil {
+			return err
+		}
 	}
 
 	return nil
