@@ -51,17 +51,18 @@ func main() {
 		},
 		{
 			Info:     "Setup ufw (uncomplicated firewall)",
-			Callable: func() error { return settings.SetupFirewall(&sshPort, scanner, etc) },
+			Callable: func() error { return settings.SetupFirewall(sshPort, scanner, etc) },
 		},
 		{
 			Info:     "Install and configure Postfix",
 			Callable: func() error { return settings.InstallPostfix(scanner, etc) },
 		},
 		{
-			Info: "Install and configure Docker",
+			Info:     "Install and configure Fail2Ban",
+			Callable: func() error { return settings.InstallFail2Ban(sshPort, scanner, etc) },
 		},
 		{
-			Info: "Install and configure Fail2Ban",
+			Info: "Install and configure Docker",
 		},
 		{
 			Info: "Format the bash prompt",

@@ -84,7 +84,7 @@ func InstallPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 	}
 
 	cmd := utils.Command(
-		"apt",
+		"apt-get",
 		"install",
 		"-y",
 		"mailutils",

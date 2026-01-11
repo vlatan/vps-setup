@@ -11,7 +11,7 @@ import (
 )
 
 // SetupFirewall sets ap an uncomplicated firewall (ufw) on the machine
-func SetupFirewall(sshPort *string, scanner *bufio.Scanner, etc *os.Root) error {
+func SetupFirewall(sshPort string, scanner *bufio.Scanner, etc *os.Root) error {
 
 	msg := colors.Yellow("Setting up firewall (ufw)...")
 	fmt.Println(msg)
@@ -43,7 +43,7 @@ func SetupFirewall(sshPort *string, scanner *bufio.Scanner, etc *os.Root) error 
 	cmds := [][]string{
 		{"ufw", "default", "allow", "outgoing"},
 		{"ufw", "default", "deny", "incoming"},
-		{"ufw", "allow", fmt.Sprintf("%s/tcp", *sshPort)},
+		{"ufw", "allow", fmt.Sprintf("%s/tcp", sshPort)},
 		{"ufw", "allow", "http/tcp"},
 		{"ufw", "allow", "https/tcp"},
 		{"ufw", "--force", "enable"},
