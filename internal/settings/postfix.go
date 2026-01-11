@@ -23,45 +23,48 @@ func InstallPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 	}
 
 	var domain string
-	prompt = "MAILNAME (domain): "
 	for {
-		domain = utils.AskQuestion(prompt, scanner)
+		domain = utils.AskQuestion("MAILNAME (domain): ", scanner)
 		if domain != "" {
 			break
 		}
 	}
 
 	var smtpHost string
-	prompt = "SMTP_HOST: "
 	for {
-		smtpHost = utils.AskQuestion(prompt, scanner)
+		smtpHost = utils.AskQuestion("SMTP_HOST: ", scanner)
 		if smtpHost != "" {
 			break
 		}
 	}
 
 	var smtpPort string
-	prompt = "SMTP_PORT: "
 	for {
-		smtpPort = utils.AskQuestion(prompt, scanner)
+		smtpPort = utils.AskQuestion("SMTP_PORT: ", scanner)
 		if smtpPort != "" {
 			break
 		}
 	}
 
 	var smtpUsername string
-	prompt = "SMTP_USERNAME: "
 	for {
-		smtpUsername = utils.AskQuestion(prompt, scanner)
+		smtpUsername, err := utils.AskSensitiveQuestion("SMTP_USERNAME: ")
+		if err != nil {
+			return err
+		}
+
 		if smtpUsername != "" {
 			break
 		}
 	}
 
 	var smtpPassword string
-	prompt = "SMTP_PASSWORD: "
 	for {
-		smtpPassword = utils.AskQuestion(prompt, scanner)
+		smtpPassword, err := utils.AskSensitiveQuestion("SMTP_PASSWORD: ")
+		if err != nil {
+			return err
+		}
+
 		if smtpPassword != "" {
 			break
 		}

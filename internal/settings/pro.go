@@ -12,7 +12,12 @@ func AttachUbuntuPro(scanner *bufio.Scanner) error {
 
 	prompt := "Provide Ubuntu Pro token [enter to skip]: "
 	prompt = colors.Yellow(prompt)
-	token := utils.AskQuestion(prompt, scanner)
+	token, err := utils.AskSensitiveQuestion(prompt)
+
+	if err != nil {
+		return err
+	}
+
 	if token == "" {
 		return nil
 	}
