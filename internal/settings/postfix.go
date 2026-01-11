@@ -48,7 +48,7 @@ func InstallPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 
 	var smtpUsername string
 	for {
-		smtpUsername, err := utils.AskSensitiveQuestion("SMTP_USERNAME: ")
+		smtpUsername, err := utils.AskPassword("SMTP_USERNAME: ")
 		if err != nil {
 			return err
 		}
@@ -60,7 +60,7 @@ func InstallPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 
 	var smtpPassword string
 	for {
-		smtpPassword, err := utils.AskSensitiveQuestion("SMTP_PASSWORD: ")
+		smtpPassword, err := utils.AskPassword("SMTP_PASSWORD: ")
 		if err != nil {
 			return err
 		}

@@ -16,8 +16,8 @@ func AskQuestion(prompt string, scanner *bufio.Scanner) string {
 	return strings.TrimSpace(scanner.Text())
 }
 
-// AskSensitiveQuestion returns user sensitive answer from terminal
-func AskSensitiveQuestion(prompt string) (string, error) {
+// AskPassword returns user sensitive answer from terminal
+func AskPassword(prompt string) (string, error) {
 	fmt.Print(prompt)
 	value, err := term.ReadPassword(int(os.Stdin.Fd()))
 	if err != nil {
