@@ -62,7 +62,8 @@ func main() {
 			Callable: func() error { return settings.InstallFail2Ban(sshPort, scanner, etc) },
 		},
 		{
-			Info: "Install and configure Docker",
+			Info:     "Install and configure Docker",
+			Callable: func() error { return settings.InstallDocker(username, scanner, etc) },
 		},
 		{
 			Info: "Format the bash prompt",

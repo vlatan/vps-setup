@@ -48,7 +48,7 @@ func HardenSSH(target *string, scanner *bufio.Scanner, etc *os.Root) error {
 	}
 
 	// Write to the file
-	data := fmt.Sprintf("\nPort %s\nAddressFamily inet\nPermitRootLogin no\n", sshPort)
+	data := fmt.Sprintf("Port %s\nAddressFamily inet\nPermitRootLogin no\n", sshPort)
 	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
 		return err
 	}

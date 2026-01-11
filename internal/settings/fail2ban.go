@@ -27,12 +27,7 @@ func InstallFail2Ban(sshPort string, scanner *bufio.Scanner, etc *os.Root) error
 		return err
 	}
 
-	// Create dirs that do not exist in the file path
-	name := "fail2ban/jail.local"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
+	// Config content
 	content := []string{
 		"[DEFAULT]",
 		"bantime  = 30m",
@@ -46,6 +41,12 @@ func InstallFail2Ban(sshPort string, scanner *bufio.Scanner, etc *os.Root) error
 		"[sshd]",
 		"enabled = true",
 		fmt.Sprintf("port = %s", sshPort),
+	}
+
+	// Create dirs that do not exist in the file path
+	name := "fail2ban/jail.local"
+	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
 	}
 
 	// Write to the file
