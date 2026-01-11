@@ -17,13 +17,11 @@ type Job struct {
 
 // Start enumerates and prints the jobs and asks
 // the user whether to continue.
-func Start(scanner *bufio.Scanner, jobs []Job) error {
+func ProcessJobs(scanner *bufio.Scanner, jobs []Job) error {
 
-	msg := "WARNING: This script will modify the machine"
-	fmt.Println(colors.Red(msg))
-
+	// Print all jobs
 	for i, job := range jobs {
-		msg = colors.Yellow(fmt.Sprintf("%d. %s", i+1, job.Info))
+		msg := colors.Yellow(fmt.Sprintf("%d. %s", i+1, job.Info))
 		fmt.Println(msg)
 	}
 
@@ -43,7 +41,7 @@ func Start(scanner *bufio.Scanner, jobs []Job) error {
 		}
 
 		if err := job.Callable(); err != nil {
-			msg = colors.Red(fmt.Sprintf("Failed: %s", job.Info))
+			msg := colors.Red(fmt.Sprintf("Failed: %s", job.Info))
 			return fmt.Errorf("%s\n%w", msg, err)
 		}
 	}

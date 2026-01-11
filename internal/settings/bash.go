@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"slices"
 	"strings"
 
@@ -157,7 +156,7 @@ func (b *Bash) FormatBashrc() error {
 
 // FormatBash configures the bash experience
 // by creating custom aliases and prompt.
-func FormatBash(username string, scanner *bufio.Scanner) error {
+func FormatBash(scanner *bufio.Scanner, home *os.Root) error {
 
 	prompt := "Do you want to format bash? [y/n]: "
 	prompt = colors.Yellow(prompt)
@@ -165,14 +164,6 @@ func FormatBash(username string, scanner *bufio.Scanner) error {
 	if !slices.Contains([]string{"yes", "y"}, start) {
 		return nil
 	}
-
-	// Open the user dir as root
-	userDir := filepath.Join("/home", username)
-	home, err := os.OpenRoot(userDir)
-	if err != nil {
-		return err
-	}
-	defer home.Close()
 
 	bash := NewBash(home)
 	callables := []func() error{

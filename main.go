@@ -4,19 +4,25 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/settings"
+	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 func main() {
 
+	msg := "WARNING: This script will modify the machine"
+	fmt.Println(colors.Red(msg))
+
 	var username, sshPort string
 	scanner := bufio.NewScanner(os.Stdin)
 
+	// Open /etc as root
 	etc, err := os.OpenRoot("/etc")
 	if err != nil {
-		panic(err)
+		utils.Exit(err)
 	}
 	defer etc.Close()
 
@@ -50,12 +56,29 @@ func main() {
 			Callable: func() error { return settings.HardenSSH(&sshPort, scanner, etc) },
 		},
 		{
-			Info:     "Setup ufw (uncomplicated firewall)",
-			Callable: func() error { return settings.SetupFirewall(sshPort, scanner, etc) },
-		},
-		{
 			Info:     "Install and configure Postfix",
 			Callable: func() error { return settings.InstallPostfix(scanner, etc) },
+		},
+	}
+
+	// Execute jobs
+	if err := settings.ProcessJobs(scanner, jobs); err != nil {
+		utils.Exit(err)
+	}
+
+	// Open /home/xxx as root
+	userDir := filepath.Join("/home", username)
+	home, err := os.OpenRoot(userDir)
+	if err != nil {
+		utils.Exit(err)
+	}
+	defer home.Close()
+
+	// These jobs require sshPort, username and home
+	jobs = []settings.Job{
+		{
+			Info:     "Setup ufw (uncomplicated firewall)",
+			Callable: func() error { return settings.SetupFirewall(sshPort, scanner, etc) },
 		},
 		{
 			Info:     "Install and configure Fail2Ban",
@@ -67,18 +90,15 @@ func main() {
 		},
 		{
 			Info:     "Format the bash prompt",
-			Callable: func() error { return settings.FormatBash(username, scanner) },
+			Callable: func() error { return settings.FormatBash(scanner, home) },
 		},
 		{
 			Info: "Create bare git repository",
 		},
 	}
 
-	// Start the machine setup
-	if err := settings.Start(scanner, jobs); err != nil {
-		msg := colors.Red("Setup was interrupted. The machine is in a 'dirty' state.")
-		fmt.Fprintln(os.Stderr, msg)
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+	// Execute jobs
+	if err := settings.ProcessJobs(scanner, jobs); err != nil {
+		utils.Exit(err)
 	}
 }
