@@ -66,7 +66,8 @@ func main() {
 			Callable: func() error { return settings.InstallDocker(username, scanner, etc) },
 		},
 		{
-			Info: "Format the bash prompt",
+			Info:     "Format the bash prompt",
+			Callable: func() error { return settings.FormatBash(username) },
 		},
 		{
 			Info: "Create bare git repository",
