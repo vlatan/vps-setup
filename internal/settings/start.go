@@ -20,8 +20,8 @@ type Job struct {
 func ProcessJobs(scanner *bufio.Scanner, jobs []Job) error {
 
 	// Print all jobs
-	for i, job := range jobs {
-		msg := colors.Yellow(fmt.Sprintf("%d. %s", i+1, job.Info))
+	for _, job := range jobs {
+		msg := colors.Yellow(fmt.Sprintf("* %s", job.Info))
 		fmt.Println(msg)
 	}
 
