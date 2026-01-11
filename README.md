@@ -22,6 +22,11 @@ multipass transfer bin/vps-setup test-bench:/home/ubuntu/
 multipass exec test-bench -- sudo /home/ubuntu/vps-setup
 ```
 
+**Or entrer the VM's shell and do work inside**
+```
+multipass shell test-bench
+```
+
 **Burn it down**
 ```
 multipass delete test-bench

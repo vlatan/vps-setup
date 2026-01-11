@@ -128,7 +128,15 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 		return err
 	}
 
-	// Configure rsyslog
+	// Configure rsyslog to capture container logs
+	// Note: Only containers with syslog driver and tags starting with "docker-" will be captured
+	// Example in compose.yml:
+	//   logging:
+	//     driver: syslog
+	//     options:
+	//       tag: docker-servicename
+	// https://docs.docker.com/config/containers/logging/syslog/
+
 	rsyslogConf := []string{
 		"# Create a template for the target log file",
 		"$template CUSTOM_LOGS,\"/var/log/containers/%programname%.log\"",
