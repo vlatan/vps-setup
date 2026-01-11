@@ -68,7 +68,7 @@ func (b *Bash) CreateAliases() error {
 	return nil
 }
 
-// FormarBash configures the bash experience
+// FormatBash configures the bash experience
 // by creating custom aliases and prompt.
 func FormatBash(username string) error {
 
