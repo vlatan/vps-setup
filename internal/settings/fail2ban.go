@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"slices"
 	"strings"
 
@@ -43,15 +42,10 @@ func InstallFail2Ban(sshPort string, scanner *bufio.Scanner, etc *os.Root) error
 		fmt.Sprintf("port = %s", sshPort),
 	}
 
-	// Create dirs that do not exist in the file path
-	name := "fail2ban/jail.local"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
 	// Write to the file
-	data := strings.Join(content, "\n") + "\n"
-	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
+	name := "fail2ban/jail.local"
+	data := []byte(strings.Join(content, "\n") + "\n")
+	if err := utils.WriteFile(etc, name, data); err != nil {
 		return err
 	}
 

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"slices"
 	"strings"
 
@@ -122,15 +121,10 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 		return err
 	}
 
-	// Create dirs that do not exist in the file path
-	name := "docker/daemon.json"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
 	// Write to the file
-	jsonData = append(jsonData, '\n')
-	if err := etc.WriteFile(name, jsonData, 0644); err != nil {
+	name := "docker/daemon.json"
+	data := append(jsonData, '\n')
+	if err := utils.WriteFile(etc, name, data); err != nil {
 		return err
 	}
 
@@ -143,15 +137,10 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 		"& stop",
 	}
 
-	// Create dirs that do not exist in the file path
-	name = "rsyslog.d/40-docker.conf"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
 	// Write to the file
-	rsyslogConfData := []byte(strings.Join(rsyslogConf, "\n") + "\n")
-	if err := etc.WriteFile(name, rsyslogConfData, 0644); err != nil {
+	name = "rsyslog.d/40-docker.conf"
+	data = []byte(strings.Join(rsyslogConf, "\n") + "\n")
+	if err := utils.WriteFile(etc, name, data); err != nil {
 		return err
 	}
 
@@ -171,15 +160,10 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 		"}",
 	}
 
-	// Create dirs that do not exist in the file path
-	name = "logrotate.d/docker"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
 	// Write to the file
-	logrotateConfData := []byte(strings.Join(logrotateConf, "\n") + "\n")
-	if err := etc.WriteFile(name, logrotateConfData, 0644); err != nil {
+	name = "logrotate.d/docker"
+	data = []byte(strings.Join(logrotateConf, "\n") + "\n")
+	if err := utils.WriteFile(etc, name, data); err != nil {
 		return err
 	}
 

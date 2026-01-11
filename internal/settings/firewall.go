@@ -36,7 +36,7 @@ func SetupFirewall(sshPort string, scanner *bufio.Scanner, etc *os.Root) error {
 
 	// Enforce IPV6 firewall rules
 	data = bytes.ReplaceAll(data, []byte("IPV6=no"), []byte("IPV6=yes"))
-	if err := etc.WriteFile(name, data, 0644); err != nil {
+	if err := utils.WriteFile(etc, name, data); err != nil {
 		return err
 	}
 

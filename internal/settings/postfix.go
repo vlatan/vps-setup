@@ -97,15 +97,10 @@ func InstallPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 		return err
 	}
 
-	// Create dirs that do not exist in the file path
-	name := "postfix/sasl/sasl_passwd"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
 	// Write to the file
+	name := "postfix/sasl/sasl_passwd"
 	data := fmt.Sprintf("[%s]:%s %s:%s", smtpHost, smtpPort, smtpUsername, smtpPassword)
-	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
+	if err := utils.WriteFile(etc, name, []byte(data)); err != nil {
 		return err
 	}
 

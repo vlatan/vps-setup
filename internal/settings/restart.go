@@ -3,7 +3,6 @@ package settings
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
@@ -16,14 +15,10 @@ func AutoRestart(etc *os.Root) error {
 	msg := colors.Yellow("Seting up services autorestart...")
 	fmt.Println(msg)
 
-	// Create dirs that do not exist in the file path
+	// Write to file
 	name := "needrestart/conf.d/no-prompt.conf"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
-	data := "$nrconf{restart} = 'a';\n"
-	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
+	data := []byte("$nrconf{restart} = 'a';\n")
+	if err := utils.WriteFile(etc, name, data); err != nil {
 		return err
 	}
 

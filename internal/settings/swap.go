@@ -43,15 +43,10 @@ func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 		}
 	}
 
-	// Create dirs that do not exist in the file path
-	name := "sysctl.d/99-my-swappiness.conf"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
 	// Write to the file
-	data := fmt.Sprintf("vm.swappiness = %s\n", swappiness)
-	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
+	name := "sysctl.d/99-my-swappiness.conf"
+	data := fmt.Appendf([]byte{}, "vm.swappiness = %s\n", swappiness)
+	if err := utils.WriteFile(etc, name, data); err != nil {
 		return err
 	}
 

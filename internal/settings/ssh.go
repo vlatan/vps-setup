@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/vlatan/vps-setup/internal/colors"
@@ -41,15 +40,10 @@ func HardenSSH(target *string, scanner *bufio.Scanner, etc *os.Root) error {
 		}
 	}
 
-	// Create dirs that do not exist in the file path
+	// // Write to file
 	name := "ssh/sshd_config.d/harden.conf"
-	if err := etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
-		return err
-	}
-
-	// Write to the file
 	data := fmt.Sprintf("Port %s\nAddressFamily inet\nPermitRootLogin no\n", sshPort)
-	if err := etc.WriteFile(name, []byte(data), 0644); err != nil {
+	if err := utils.WriteFile(etc, name, []byte(data)); err != nil {
 		return err
 	}
 
