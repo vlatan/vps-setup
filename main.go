@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
+	"strings"
 
 	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/settings"
@@ -13,10 +15,11 @@ import (
 
 func main() {
 
-	msg := "WARNING: This script will modify the machine"
+	msg := "WARNING: This script will modify the machine:"
 	fmt.Println(colors.Red(msg))
 
 	var username, sshPort string
+	var home *os.Root
 	scanner := bufio.NewScanner(os.Stdin)
 
 	// Open /etc as root
@@ -26,7 +29,7 @@ func main() {
 	}
 	defer etc.Close()
 
-	jobs := []settings.Job{
+	primaryJobs := []settings.Job{
 		{
 			Info:     "Enable services autorestart",
 			Callable: func() error { return settings.AutoRestart(etc) },
@@ -61,21 +64,8 @@ func main() {
 		},
 	}
 
-	// Execute jobs
-	if err := settings.ProcessJobs(scanner, jobs); err != nil {
-		utils.Exit(err)
-	}
-
-	// Open /home/xxx as root
-	userDir := filepath.Join("/home", username)
-	home, err := os.OpenRoot(userDir)
-	if err != nil {
-		utils.Exit(err)
-	}
-	defer home.Close()
-
 	// These jobs require sshPort, username and home
-	jobs = []settings.Job{
+	secondaryJobs := []settings.Job{
 		{
 			Info:     "Setup ufw (uncomplicated firewall)",
 			Callable: func() error { return settings.SetupFirewall(sshPort, scanner, etc) },
@@ -97,8 +87,35 @@ func main() {
 		},
 	}
 
-	// Execute jobs
-	if err := settings.ProcessJobs(scanner, jobs); err != nil {
+	// Print all the jobs to be done
+	allJobs := append(primaryJobs, secondaryJobs...)
+	for _, job := range allJobs {
+		msg := colors.Yellow(fmt.Sprintf("* %s", job.Info))
+		fmt.Println(msg)
+	}
+
+	// Check if the user wants to continue
+	prompt := "Continue? [y/n]: "
+	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
+	if !slices.Contains([]string{"yes", "y"}, start) {
+		return
+	}
+
+	// Execute the first batch of jobs
+	if err := settings.ProcessJobs(scanner, primaryJobs); err != nil {
+		utils.Exit(err)
+	}
+
+	// Open /home/xxx as root
+	userDir := filepath.Join("/home", username)
+	home, err = os.OpenRoot(userDir)
+	if err != nil {
+		utils.Exit(err)
+	}
+	defer home.Close()
+
+	// Execute the second batch of jobs
+	if err := settings.ProcessJobs(scanner, secondaryJobs); err != nil {
 		utils.Exit(err)
 	}
 }
