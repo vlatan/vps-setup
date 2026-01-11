@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 
+	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/settings"
 )
 
@@ -71,6 +73,9 @@ func main() {
 
 	// Start the machine setup
 	if err := settings.Start(scanner, jobs); err != nil {
-		panic(err)
+		msg := colors.Red("Setup was interrupted. The machine is in a 'dirty' state.")
+		fmt.Fprintln(os.Stderr, msg)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }

@@ -1,12 +1,19 @@
 package utils
 
 import (
+	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
-// Command runs a terminal command
-func Command(name string, args ...string) *exec.Cmd {
+type Cmd struct {
+	*exec.Cmd
+}
+
+// Command initializes a terminal command object
+func Command(name string, args ...string) *Cmd {
 
 	// Init the command
 	cmd := exec.Command(name, args...)
@@ -17,5 +24,23 @@ func Command(name string, args ...string) *exec.Cmd {
 	cmd.Stdout = os.Stdout // Show the output
 	cmd.Stderr = os.Stderr // Show errors directly to the terminal
 
-	return cmd
+	return &Cmd{Cmd: cmd}
+}
+
+// Run executes the command and captures stderr.
+// If the command fails, returns an error with the captured stderr message.
+func (c *Cmd) Run() error {
+	var stderr bytes.Buffer
+	c.Cmd.Stderr = &stderr
+
+	err := c.Cmd.Run()
+	if err == nil {
+		return nil
+	}
+
+	if stderr.Len() == 0 {
+		return err
+	}
+
+	return fmt.Errorf("%s\n%w", strings.TrimSpace(stderr.String()), err)
 }
