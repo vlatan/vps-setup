@@ -43,7 +43,8 @@ func Start(scanner *bufio.Scanner, jobs []Job) error {
 		}
 
 		if err := job.Callable(); err != nil {
-			return err
+			msg = colors.Red(fmt.Sprintf("Failed: %s", job.Info))
+			return fmt.Errorf("%s\n%w", msg, err)
 		}
 	}
 
