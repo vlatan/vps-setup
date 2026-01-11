@@ -67,7 +67,7 @@ func main() {
 		},
 		{
 			Info:     "Format the bash prompt",
-			Callable: func() error { return settings.FormatBash(username) },
+			Callable: func() error { return settings.FormatBash(username, scanner) },
 		},
 		{
 			Info: "Create bare git repository",

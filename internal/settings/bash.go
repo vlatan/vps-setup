@@ -1,11 +1,14 @@
 package settings
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
+	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
@@ -154,7 +157,14 @@ func (b *Bash) FormatBashrc() error {
 
 // FormatBash configures the bash experience
 // by creating custom aliases and prompt.
-func FormatBash(username string) error {
+func FormatBash(username string, scanner *bufio.Scanner) error {
+
+	prompt := "Do you want to format bash? [y/n]: "
+	prompt = colors.Yellow(prompt)
+	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
+	if !slices.Contains([]string{"yes", "y"}, start) {
+		return nil
+	}
 
 	// Open the user dir as root
 	userDir := filepath.Join("/home", username)
