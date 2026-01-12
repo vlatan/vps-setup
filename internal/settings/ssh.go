@@ -40,8 +40,9 @@ func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.
 		}
 	}
 
+	// Only the port is not commented
 	hardenContent := []string{
-		"# Port " + sshPort,
+		"Port " + sshPort,
 		"# AddressFamily inet",
 		"# PermitRootLogin no",
 		"# PermitEmptyPasswords no",

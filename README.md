@@ -58,10 +58,12 @@ The script will guide you trough the process, ask you to provide input. It will 
 
 ## Post Instalation Steps - Configure SSH Key-Based Authentication
 
+In order to make the login process to your remote machine more streamlined we need to make some changes
+
 
 #### Configure SSH Locally
 
-In order to make the login process to your remote machine more streamlined we need to make some changes **ON YOUR LOCAL MACHINE**. Edit your local `~/.ssh/config` file and add this content to it.
+**ON YOUR LOCAL MACHINE** edit your local `~/.ssh/config` file and add this content to it.
 ```
 Host <remote_host>
 Hostname xxx.xx.xx.xx
@@ -89,24 +91,19 @@ chmod 400 ~/.ssh/<key_name>.pub ~/.ssh/<key_name>
 
 Push the public key to the remote server.
 ```
-ssh-copy-id -i ~/.ssh/<key_name>.pub root@xxx.xx.xxx.xx
+ssh-copy-id -i ~/.ssh/<key_name>.pub -p <port> root@xxx.xx.xxx.xx
 ```
 
 If you are able to connect with the command `ssh <remote_host>` then you can procede to finish the SSH hardening of the remote machine.
 
+
 #### Disabe Password Authentication on the Remote Server
-Login to the **REMOTE** machine.
+
+Login to the **REMOTE** machine, open the `/etc/ssh/sshd_config.d/harden.conf` file and comment out the rules inside to disable the root login altogether, restart the `ssh` service for changes to take effect. You can also safely upgrade the software and reboot.
 ```
 ssh <remote_host>
-```
-
-Open the `/etc/ssh/sshd_config.d/harden.conf` file and comment out the rules inside to disable the root login altogether on the remote machine and restart the `ssh` service for changes to take effect.
-```
 sudo nano /etc/ssh/sshd_config.d/harden.conf
 sudo systemctl restart ssh
-```
-
-You can safely upgrade the software on the remote machine and reboot.
-```
-sysupdate && sudo reboot
+sysupdate
+sudo reboot
 ```
