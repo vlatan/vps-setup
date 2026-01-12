@@ -30,7 +30,7 @@ func SetupGitRepo(username string, scanner *bufio.Scanner, home *os.Root) error 
 		}
 	}
 
-	// Create the chekout dir
+	// Create the checkout dir
 	checkoutDirAbsPath := filepath.Join(home.Name(), checkoutDirName)
 	if err := home.MkdirAll(checkoutDirAbsPath, 0755); err != nil {
 		return err
