@@ -59,6 +59,12 @@ func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.
 		return err
 	}
 
+	// Restart SSH
+	cmd := utils.Command("systemctl", "restart", "ssh")
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
 	// Set SSH port to target
 	*target = sshPort
 
