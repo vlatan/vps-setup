@@ -55,17 +55,13 @@ func main() {
 			Callable: func() error { return settings.AddUser(&username, scanner) },
 		},
 		{
-			Info:     "Harden SSH access",
+			Info:     "Harden SSH access (add commented rules)",
 			Callable: func() error { return settings.HardenSSH(&sshPort, username, scanner, etc) },
 		},
 		{
 			Info:     "Install and configure Postfix",
 			Callable: func() error { return settings.InstallPostfix(scanner, etc) },
 		},
-	}
-
-	// These jobs require sshPort, username and home
-	secondaryJobs := []settings.Job{
 		{
 			Info:     "Setup ufw (uncomplicated firewall)",
 			Callable: func() error { return settings.SetupFirewall(sshPort, scanner, etc) },
@@ -78,6 +74,10 @@ func main() {
 			Info:     "Install and configure Docker",
 			Callable: func() error { return settings.InstallDocker(username, scanner, etc) },
 		},
+	}
+
+	// These jobs require the home user root
+	secondaryJobs := []settings.Job{
 		{
 			Info:     "Format the bash prompt",
 			Callable: func() error { return settings.FormatBash(scanner, home) },
