@@ -44,12 +44,13 @@ multipass purge
 
 First of course you need to create your VPS at your cloud provider.
 
-Compile the binary, move it to your VPS, run it and remove it.
+Compile the binary, move it to your VPS, login, run it and remove it.
 ```
 make
 scp bin/vps-setup root@xx.xxx.xxxx.xxxx:
-ssh root@xx.xxx.xxxx.xxxx './vps-setup'
-ssh root@xx.xxx.xxxx.xxxx 'rm vps-setup'
+ssh root@xx.xxx.xxxx.xxxx
+./vps-setup
+rm vps-setup
 ```
 
 The script will guide you trough the process, ask you to provide input. It will install all the necessary software and configure the machine.
@@ -57,10 +58,6 @@ The script will guide you trough the process, ask you to provide input. It will 
 
 ## Post Instalation Steps - Configure SSH Key-Based Authentication
 
-By now you should be able to login via SSH ONLY on port `<port>` and ONLY with your `<remote_username>`.
-```
-ssh -p <port> <remote_username>@xx.xxx.xxxx.xxxx
-```
 
 #### Configure SSH Locally
 
@@ -92,24 +89,20 @@ chmod 400 ~/.ssh/<key_name>.pub ~/.ssh/<key_name>
 
 Push the public key to the remote server.
 ```
-ssh-copy-id -i ~/.ssh/<key_name>.pub -p <port> <remote_username>@xxx.xx.xxx.xx
+ssh-copy-id -i ~/.ssh/<key_name>.pub root@xxx.xx.xxx.xx
 ```
 
 If you are able to connect with the command `ssh <remote_host>` then you can procede to finish the SSH hardening of the remote machine.
 
 #### Disabe Password Authentication on the Remote Server
-Login to the remote machine.
+Login to the **REMOTE** machine.
 ```
 ssh <remote_host>
 ```
 
-Modify the `/etc/ssh/sshd_config.d/harden.conf` file and add the following rule to disable password login alltogether and allow login just with private/public key pairs.
+Open the `/etc/ssh/sshd_config.d/harden.conf` file and comment out the rules inside to disable the root login altogether on the remote machine and restart the `ssh` service for changes to take effect.
 ```
-PasswordAuthentication no
-```
-
-Restart the `ssh` service.
-```
+sudo nano /etc/ssh/sshd_config.d/harden.conf
 sudo systemctl restart ssh
 ```
 

@@ -56,7 +56,7 @@ func main() {
 		},
 		{
 			Info:     "Harden SSH access",
-			Callable: func() error { return settings.HardenSSH(&sshPort, scanner, etc) },
+			Callable: func() error { return settings.HardenSSH(&sshPort, username, scanner, etc) },
 		},
 		{
 			Info:     "Install and configure Postfix",

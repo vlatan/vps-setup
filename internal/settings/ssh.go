@@ -2,16 +2,16 @@ package settings
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // HardenSSH hardens the SSH config
-func HardenSSH(target *string, scanner *bufio.Scanner, etc *os.Root) error {
+func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.Root) error {
 
 	var sshPort string
 	prompt := "On which PORT do you want to connect via SSH [enter for 22]: "
@@ -40,16 +40,21 @@ func HardenSSH(target *string, scanner *bufio.Scanner, etc *os.Root) error {
 		}
 	}
 
-	// // Write to file
-	name := "ssh/sshd_config.d/harden.conf"
-	data := fmt.Sprintf("Port %s\nAddressFamily inet\nPermitRootLogin no\n", sshPort)
-	if err := utils.WriteFile(etc, name, []byte(data)); err != nil {
-		return err
+	hardenContent := []string{
+		"# Port " + sshPort,
+		"# AddressFamily inet",
+		"# PermitRootLogin no",
+		"# PermitEmptyPasswords no",
+		"# PasswordAuthentication no",
+		"# KbdInteractiveAuthentication no",
+		"# AuthenticationMethods publickey",
+		"# AllowUsers " + username,
 	}
 
-	// Restart SSH
-	cmd := utils.Command("systemctl", "restart", "ssh")
-	if err := cmd.Run(); err != nil {
+	// // Write to file
+	name := "ssh/sshd_config.d/harden.conf"
+	data := []byte(strings.Join(hardenContent, "\n") + "\n")
+	if err := utils.WriteFile(etc, name, data); err != nil {
 		return err
 	}
 
