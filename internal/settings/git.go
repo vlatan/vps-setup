@@ -22,22 +22,23 @@ func SetupGitRepo(username string, scanner *bufio.Scanner, home *os.Root) error 
 		return nil
 	}
 
-	var dirName string
+	var checkoutDirName string
 	for {
-		dirName = utils.AskQuestion("Provide repo directory name: ", scanner)
-		if dirName != "" {
+		checkoutDirName = utils.AskQuestion("Provide repo directory name: ", scanner)
+		if checkoutDirName != "" {
 			break
 		}
 	}
 
 	// Create the chekout dir
-	checkoutDirAbsPath := filepath.Join(home.Name(), dirName)
+	checkoutDirAbsPath := filepath.Join(home.Name(), checkoutDirName)
 	if err := home.MkdirAll(checkoutDirAbsPath, 0755); err != nil {
 		return err
 	}
 
 	// Repo absolute dir path
-	repoDirAbsPath := checkoutDirAbsPath + ".git"
+	repoDirName := checkoutDirName + ".git"
+	repoDirAbsPath := filepath.Join(home.Name(), repoDirName)
 
 	// Create the bare repo
 	cmd := utils.Command("git", "init", "--bare", "--initial-branch=main", repoDirAbsPath)
@@ -58,7 +59,7 @@ func SetupGitRepo(username string, scanner *bufio.Scanner, home *os.Root) error 
 		fmt.Sprintf("GIT_WORK_TREE=%s git checkout -f main", checkoutDirAbsPath),
 	}
 
-	hookFile := filepath.Join(dirName+".git", "hooks", "post-receive")
+	hookFile := filepath.Join(repoDirName, "hooks", "post-receive")
 	data := []byte(strings.Join(hookContent, "\n") + "\n")
 	if err := utils.WriteFile(home, hookFile, data); err != nil {
 		return err
