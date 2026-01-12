@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/settings"
@@ -97,10 +98,12 @@ func main() {
 
 	// Check if the user wants to continue
 	prompt := "Continue? [y/N]: "
-	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
-	if !slices.Contains([]string{"yes", "y"}, start) {
+	startScript := strings.ToLower(utils.AskQuestion(prompt, scanner))
+	if !slices.Contains([]string{"yes", "y"}, startScript) {
 		return
 	}
+
+	startTime := time.Now()
 
 	// Execute the first batch of jobs
 	if err := utils.ProcessJobs(scanner, primaryJobs); err != nil {
@@ -120,6 +123,20 @@ func main() {
 		utils.Exit(err)
 	}
 
-	msg = "The script finished successfully"
+	timeTook := time.Since(startTime)
+
+	fmt.Println(
+		colors.Green("Installation done. Time took:"),
+		fmt.Sprintf("%.2f", timeTook.Seconds()),
+		colors.Green("seconds."),
+	)
+
+	fmt.Println(
+		colors.Green("Log out and log back in on port"),
+		colors.Yellow(sshPort),
+		colors.Green("with user"),
+		colors.Yellow(username)+colors.Green("."),
+	)
+	msg = "Make sure you complete the setup according to the documentaion."
 	fmt.Println(colors.Green(msg))
 }

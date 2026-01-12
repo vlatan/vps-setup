@@ -1,2 +1,1 @@
-* Add time took
-* Maybe try to take arguments from .env file or environment first before asking for input
+* Take arguments from .env file or environment before asking for input
