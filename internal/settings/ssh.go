@@ -43,6 +43,7 @@ func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.
 	// Only the port is not commented
 	hardenContent := []string{
 		"Port " + sshPort,
+		"# UsePAM no",
 		"# AddressFamily inet",
 		"# PermitRootLogin no",
 		"# PermitEmptyPasswords no",
@@ -59,10 +60,17 @@ func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.
 		return err
 	}
 
-	// Restart SSH
-	cmd := utils.Command("systemctl", "restart", "ssh")
-	if err := cmd.Run(); err != nil {
-		return err
+	cmds := [][]string{
+		{"systemctl", "daemon-reload"},
+		{"systemctl", "restart", "ssh"},
+	}
+
+	// Restart SSH, If SSH port is changed we need daemon-reload too
+	for _, cmdArgs := range cmds {
+		cmd := utils.Command(cmdArgs[0], cmdArgs[1:]...)
+		if err := cmd.Run(); err != nil {
+			return err
+		}
 	}
 
 	// Set SSH port to target
