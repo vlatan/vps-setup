@@ -83,11 +83,12 @@ func main() {
 			Callable: func() error { return settings.FormatBash(scanner, home) },
 		},
 		{
-			Info: "Create bare git repository",
+			Info:     "Create bare git repository",
+			Callable: func() error { return settings.SetupGitRepo(username, scanner, home) },
 		},
 	}
 
-	// Print all the jobs to be done
+	// Print all the jobs infos
 	allJobs := append(primaryJobs, secondaryJobs...)
 	for _, job := range allJobs {
 		msg := colors.Yellow(fmt.Sprintf("* %s", job.Info))
