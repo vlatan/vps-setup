@@ -29,7 +29,7 @@ func main() {
 	}
 	defer etc.Close()
 
-	primaryJobs := []settings.Job{
+	primaryJobs := []utils.Job{
 		{
 			Info:     "Enable services autorestart",
 			Callable: func() error { return settings.AutoRestart(etc) },
@@ -77,7 +77,7 @@ func main() {
 	}
 
 	// These jobs require the home user root
-	secondaryJobs := []settings.Job{
+	secondaryJobs := []utils.Job{
 		{
 			Info:     "Format the bash prompt",
 			Callable: func() error { return settings.FormatBash(scanner, home) },
@@ -103,7 +103,7 @@ func main() {
 	}
 
 	// Execute the first batch of jobs
-	if err := settings.ProcessJobs(scanner, primaryJobs); err != nil {
+	if err := utils.ProcessJobs(scanner, primaryJobs); err != nil {
 		utils.Exit(err)
 	}
 
@@ -116,7 +116,7 @@ func main() {
 	defer home.Close()
 
 	// Execute the second batch of jobs
-	if err := settings.ProcessJobs(scanner, secondaryJobs); err != nil {
+	if err := utils.ProcessJobs(scanner, secondaryJobs); err != nil {
 		utils.Exit(err)
 	}
 
