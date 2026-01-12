@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/vlatan/vps-setup/internal/colors"
@@ -15,19 +14,12 @@ import (
 // SetupGitRepo sets up a bare git repo
 func SetupGitRepo(username string, scanner *bufio.Scanner, home *os.Root) error {
 
-	prompt := "Do you want to create a bare git repo [y/n]: "
+	prompt := "Provide Git repo name [enter to skip]: "
 	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
-	if !slices.Contains([]string{"yes", "y"}, start) {
-		return nil
-	}
+	checkoutDirName := utils.AskQuestion(prompt, scanner)
 
-	var checkoutDirName string
-	for {
-		checkoutDirName = utils.AskQuestion("Provide repo directory name: ", scanner)
-		if checkoutDirName != "" {
-			break
-		}
+	if checkoutDirName == "" {
+		return nil
 	}
 
 	// Create the checkout dir
