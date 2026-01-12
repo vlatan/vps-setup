@@ -60,12 +60,12 @@ func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.
 		return err
 	}
 
+	// Restart SSH, If SSH port is changed we need daemon-reload too
 	cmds := [][]string{
 		{"systemctl", "daemon-reload"},
 		{"systemctl", "restart", "ssh"},
 	}
 
-	// Restart SSH, If SSH port is changed we need daemon-reload too
 	for _, cmdArgs := range cmds {
 		cmd := utils.Command(cmdArgs[0], cmdArgs[1:]...)
 		if err := cmd.Run(); err != nil {
