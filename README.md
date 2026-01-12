@@ -97,7 +97,7 @@ ssh-copy-id -i ~/.ssh/<key_name>.pub -p <port> root@xxx.xx.xxx.xx
 If you are able to connect with the command `ssh <remote_host>` then you can procede to finish the SSH hardening of the remote machine.
 
 
-#### Disabe Password Authentication on the Remote Server
+#### Disabe Password Authentication and Root Login on the Remote Server
 
 Login to the **REMOTE** machine, open the `/etc/ssh/sshd_config.d/harden.conf` file and comment out the rules inside to disable the root login altogether, restart the `ssh` service for changes to take effect. You can also safely upgrade the software and reboot.
 ```
