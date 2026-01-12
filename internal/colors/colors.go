@@ -55,6 +55,7 @@ func Red(prompt string) string {
 	return fmt.Sprintf("%s%s%s", FgRed, prompt, TdReset)
 }
 
-func Bold(prompt string) string {
-	return fmt.Sprintf("%s%s%s", TdBold, prompt, TdReset)
+// Green returns a given prompt in green color
+func Green(prompt string) string {
+	return fmt.Sprintf("%s%s%s", FgGreen, prompt, TdReset)
 }

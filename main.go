@@ -119,4 +119,7 @@ func main() {
 	if err := settings.ProcessJobs(scanner, secondaryJobs); err != nil {
 		utils.Exit(err)
 	}
+
+	msg = "The script finished successfully"
+	fmt.Println(colors.Green(msg))
 }
