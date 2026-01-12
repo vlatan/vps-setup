@@ -31,14 +31,14 @@ func SetupGitRepo(username string, scanner *bufio.Scanner, home *os.Root) error 
 	}
 
 	// Create the checkout dir
-	checkoutDirAbsPath := filepath.Join(home.Name(), checkoutDirName)
-	if err := home.MkdirAll(checkoutDirAbsPath, 0755); err != nil {
+	if err := home.MkdirAll(checkoutDirName, 0755); err != nil {
 		return err
 	}
 
-	// Repo absolute dir path
+	// Define repo and checkout dirs absolute paths
 	repoDirName := checkoutDirName + ".git"
 	repoDirAbsPath := filepath.Join(home.Name(), repoDirName)
+	checkoutDirAbsPath := filepath.Join(home.Name(), checkoutDirName)
 
 	// Create the bare repo
 	cmd := utils.Command("git", "init", "--bare", "--initial-branch=main", repoDirAbsPath)
