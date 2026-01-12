@@ -71,7 +71,6 @@ Port <port>
 User <remote_username>
 PubKeyAuthentication yes
 IdentityFile /home/<local_username>/.ssh/<key_name>
-ForwardX11 yes
 ```
 
 Restrict access to config file.
@@ -89,9 +88,9 @@ Restrict access to the keys.
 chmod 400 ~/.ssh/<key_name>.pub ~/.ssh/<key_name>
 ```
 
-Push the public key to the remote server.
+Push the public key to the remote server. This will still ask for user password.
 ```
-ssh-copy-id -i ~/.ssh/<key_name>.pub -p <port> root@xxx.xx.xxx.xx
+ssh-copy-id -i ~/.ssh/<key_name>.pub -p <port> <remote_username>@xxx.xx.xxx.xx
 ```
 
 If you are able to connect with the command `ssh <remote_host>` then you can procede to finish the SSH hardening of the remote machine.
@@ -103,6 +102,7 @@ Login to the **REMOTE** machine, open the `/etc/ssh/sshd_config.d/harden.conf` f
 ```
 ssh <remote_host>
 sudo nano /etc/ssh/sshd_config.d/harden.conf
+sudo systemctl daemon-reload
 sudo systemctl restart ssh
 sysupdate
 sudo reboot
