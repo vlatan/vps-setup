@@ -17,7 +17,7 @@ import (
 func ChangeSwappiness(scanner *bufio.Scanner, etc *os.Root) error {
 
 	var swappiness string
-	prompt := "Provide system swappines value 0-100 [enter for 20]: "
+	prompt := "Provide system swappines value 0-100 [20]: "
 	prompt = colors.Yellow(prompt)
 
 	// Function to check if the swappiness input is valid

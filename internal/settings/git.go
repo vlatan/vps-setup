@@ -14,7 +14,7 @@ import (
 // SetupGitRepo sets up a bare git repo
 func SetupGitRepo(username string, scanner *bufio.Scanner, home *os.Root) error {
 
-	prompt := "Provide Git repo name [enter to skip]: "
+	prompt := "Provide Git repo name [optiona]: "
 	prompt = colors.Yellow(prompt)
 	checkoutDirName := utils.AskQuestion(prompt, scanner)
 

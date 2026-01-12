@@ -14,7 +14,7 @@ import (
 func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.Root) error {
 
 	var sshPort string
-	prompt := "On which PORT do you want to connect via SSH [enter for 22]: "
+	prompt := "On which PORT do you want to connect via SSH [22]: "
 	prompt = colors.Yellow(prompt)
 
 	// Function to check if the port input is valid

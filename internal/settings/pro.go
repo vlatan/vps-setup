@@ -10,7 +10,7 @@ import (
 // AttachUbuntuPro attaches Ubuntu Pro subscription to the machine
 func AttachUbuntuPro(scanner *bufio.Scanner) error {
 
-	prompt := "Provide Ubuntu Pro token [enter to skip]: "
+	prompt := "Provide Ubuntu Pro token [optional]: "
 	prompt = colors.Yellow(prompt)
 	token, err := utils.AskPassword(prompt)
 

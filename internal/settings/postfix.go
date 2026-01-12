@@ -12,10 +12,10 @@ import (
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
-// InstallPostfix installs Postfix and sets up SMTP relay
-func InstallPostfix(scanner *bufio.Scanner, etc *os.Root) error {
+// SetupPostfix installs Postfix and sets up SMTP relay
+func SetupPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 
-	prompt := "Do you want to install Postfix and setup SMTP relay? [y/n]: "
+	prompt := "Do you want to setup Postfix SMTP relay? [y/N]: "
 	prompt = colors.Yellow(prompt)
 	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {

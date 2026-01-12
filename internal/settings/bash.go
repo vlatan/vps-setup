@@ -158,7 +158,7 @@ func (b *Bash) FormatBashrc() error {
 // by creating custom aliases and prompt.
 func FormatBash(scanner *bufio.Scanner, home *os.Root) error {
 
-	prompt := "Do you want to format bash? [y/n]: "
+	prompt := "Do you want to format bash? [y/N]: "
 	prompt = colors.Yellow(prompt)
 	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {

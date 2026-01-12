@@ -59,8 +59,8 @@ func main() {
 			Callable: func() error { return settings.HardenSSH(&sshPort, username, scanner, etc) },
 		},
 		{
-			Info:     "Install and configure Postfix",
-			Callable: func() error { return settings.InstallPostfix(scanner, etc) },
+			Info:     "Setup Postfix SMTP relay",
+			Callable: func() error { return settings.SetupPostfix(scanner, etc) },
 		},
 		{
 			Info:     "Setup ufw (uncomplicated firewall)",
@@ -96,7 +96,7 @@ func main() {
 	}
 
 	// Check if the user wants to continue
-	prompt := "Continue? [y/n]: "
+	prompt := "Continue? [y/N]: "
 	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {
 		return

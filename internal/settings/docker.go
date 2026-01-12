@@ -15,7 +15,7 @@ import (
 // InstallDocker installs and configures Docker
 func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error {
 
-	prompt := "Do you want to install Docker? [y/n]: "
+	prompt := "Do you want to install Docker? [y/N]: "
 	prompt = colors.Yellow(prompt)
 	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {

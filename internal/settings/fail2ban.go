@@ -14,7 +14,7 @@ import (
 // InstallFail2Ban installs and configures Fail2Ban
 func InstallFail2Ban(sshPort string, scanner *bufio.Scanner, etc *os.Root) error {
 
-	prompt := "Do you want to install Fail2Ban? [y/n]: "
+	prompt := "Do you want to install Fail2Ban? [y/N]: "
 	prompt = colors.Yellow(prompt)
 	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {
