@@ -54,7 +54,6 @@ func New() *Setup {
 	}
 
 	cfg.Etc = etc
-
 	return &cfg
 }
 
