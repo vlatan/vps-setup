@@ -9,8 +9,12 @@ import (
 
 // SetTimezone sets a timezone on the machine
 func SetTimezone(scanner *bufio.Scanner) error {
-	prompt := colors.Yellow("Provide timezone [Continent/City]: ")
+	prompt := colors.Yellow("Provide timezone [Continent/City] [UTC]: ")
 	timezone := utils.AskQuestion(prompt, scanner)
+	if timezone == "" {
+		timezone = "UTC"
+	}
+
 	cmd := utils.Command("timedatectl", "set-timezone", timezone)
 	return cmd.Run()
 }
