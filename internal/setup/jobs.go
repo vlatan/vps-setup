@@ -12,9 +12,9 @@ type Job struct {
 }
 
 // GetJobs returns a slice of all the jobs to be done.
-// The order of the methods is important, because
-// some of them change the state of the setup and others
-// need that new state.
+// The order of the methods is important,
+// because some of them change the state
+// and others need that new state.
 func (s *Setup) GetJobs() []Job {
 	return []Job{
 		{
@@ -42,7 +42,7 @@ func (s *Setup) GetJobs() []Job {
 			Callable: s.AddUser,
 		},
 		{
-			Info:     "Harden SSH access (add commented rules)",
+			Info:     "Harden SSH access",
 			Callable: s.HardenSSH,
 		},
 		{
