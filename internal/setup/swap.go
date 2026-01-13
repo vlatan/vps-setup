@@ -14,36 +14,8 @@ import (
 // the swap is going to begin to be utilized.
 func (s *Setup) ChangeSwappiness() error {
 
-	// Function to check if the swappiness input is valid
-	valid := func(s string) bool {
-		n, err := strconv.Atoi(s)
-		if err != nil {
-			return false
-		}
-		return n >= 0 && n <= 100
-	}
-
-	// If swappiness is not valid ask the user
-	if !valid(s.Swappiness) {
-
-		prompt := "Provide system swappiness value 0-100 [20]: "
-		prompt = colors.Yellow(prompt)
-
-		for { // Keep asking the question if swappiness is invalid
-			s.Swappiness = utils.AskQuestion(prompt, s.Scanner)
-
-			if s.Swappiness == "" {
-				s.Swappiness = "20"
-				break
-			}
-
-			if valid(s.Swappiness) {
-				break
-			}
-		}
-	} else {
-		fmt.Println(colors.Yellow("Seting up the swappiness..."))
-	}
+	s.setSwappiness()
+	fmt.Println(colors.Yellow("Seting up the swappiness..."))
 
 	// Write to the file
 	name := "sysctl.d/99-my-swappiness.conf"
@@ -56,4 +28,36 @@ func (s *Setup) ChangeSwappiness() error {
 	confPath := filepath.Join(s.Etc.Name(), name)
 	cmd := utils.Command("sysctl", "-p", confPath)
 	return cmd.Run()
+}
+
+func (s *Setup) setSwappiness() {
+
+	// Helper function to check if the swappiness input is valid
+	valid := func(s string) bool {
+		n, err := strconv.Atoi(s)
+		if err != nil {
+			return false
+		}
+		return n >= 0 && n <= 100
+	}
+
+	if valid(s.Swappiness) {
+		return
+	}
+
+	prompt := "Provide system swappiness value 0-100 [20]: "
+	prompt = colors.Yellow(prompt)
+
+	for { // Keep asking the question if swappiness is invalid
+		s.Swappiness = utils.AskQuestion(prompt, s.Scanner)
+
+		if s.Swappiness == "" {
+			s.Swappiness = "20"
+			break
+		}
+
+		if valid(s.Swappiness) {
+			break
+		}
+	}
 }
