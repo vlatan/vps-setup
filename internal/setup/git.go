@@ -1,9 +1,7 @@
 package setup
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -12,25 +10,25 @@ import (
 )
 
 // SetupGitRepo sets up a bare git repo
-func SetupGitRepo(username string, scanner *bufio.Scanner, home *os.Root) error {
+func (s *Setup) SetupGitRepo() error {
 
 	prompt := "Provide Git repo name [optiona]: "
 	prompt = colors.Yellow(prompt)
-	checkoutDirName := utils.AskQuestion(prompt, scanner)
+	checkoutDirName := utils.AskQuestion(prompt, s.Scanner)
 
 	if checkoutDirName == "" {
 		return nil
 	}
 
 	// Create the checkout dir
-	if err := home.MkdirAll(checkoutDirName, 0755); err != nil {
+	if err := s.Home.MkdirAll(checkoutDirName, 0755); err != nil {
 		return err
 	}
 
 	// Define repo and checkout dirs absolute paths
 	repoDirName := checkoutDirName + ".git"
-	repoDirAbsPath := filepath.Join(home.Name(), repoDirName)
-	checkoutDirAbsPath := filepath.Join(home.Name(), checkoutDirName)
+	repoDirAbsPath := filepath.Join(s.Home.Name(), repoDirName)
+	checkoutDirAbsPath := filepath.Join(s.Home.Name(), checkoutDirName)
 
 	// Create the bare repo
 	cmd := utils.Command("git", "init", "--bare", "--initial-branch=main", repoDirAbsPath)
@@ -53,15 +51,15 @@ func SetupGitRepo(username string, scanner *bufio.Scanner, home *os.Root) error 
 
 	hookFile := filepath.Join(repoDirName, "hooks", "post-receive")
 	data := []byte(strings.Join(hookContent, "\n") + "\n")
-	if err := utils.WriteFile(home, hookFile, data); err != nil {
+	if err := utils.WriteFile(s.Home, hookFile, data); err != nil {
 		return err
 	}
 
 	// Asign permissions
-	hookFileAbsPath := filepath.Join(home.Name(), hookFile)
+	hookFileAbsPath := filepath.Join(s.Home.Name(), hookFile)
 	cmds := [][]string{
 		{"chmod", "+x", hookFileAbsPath},
-		{"chown", "-R", username + ":" + username, checkoutDirAbsPath, repoDirAbsPath},
+		{"chown", "-R", s.Username + ":" + s.Username, checkoutDirAbsPath, repoDirAbsPath},
 	}
 
 	for _, cmdArgs := range cmds {

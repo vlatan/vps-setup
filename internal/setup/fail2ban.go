@@ -1,9 +1,7 @@
 package setup
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"slices"
 	"strings"
 
@@ -12,11 +10,11 @@ import (
 )
 
 // InstallFail2Ban installs and configures Fail2Ban
-func InstallFail2Ban(sshPort string, scanner *bufio.Scanner, etc *os.Root) error {
+func (s *Setup) InstallFail2Ban() error {
 
 	prompt := "Do you want to install Fail2Ban? [y/N]: "
 	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
+	start := strings.ToLower(utils.AskQuestion(prompt, s.Scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {
 		return nil
 	}
@@ -39,13 +37,13 @@ func InstallFail2Ban(sshPort string, scanner *bufio.Scanner, etc *os.Root) error
 		"",
 		"[sshd]",
 		"enabled = true",
-		fmt.Sprintf("port = %s", sshPort),
+		fmt.Sprintf("port = %s", s.SSHPort),
 	}
 
 	// Write to the file
 	name := "fail2ban/jail.local"
 	data := []byte(strings.Join(content, "\n") + "\n")
-	if err := utils.WriteFile(etc, name, data); err != nil {
+	if err := utils.WriteFile(s.Etc, name, data); err != nil {
 		return err
 	}
 

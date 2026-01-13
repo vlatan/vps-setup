@@ -1,17 +1,15 @@
 package setup
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
-	"os"
 
 	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // SetupFirewall sets ap an uncomplicated firewall (ufw) on the machine
-func SetupFirewall(sshPort string, scanner *bufio.Scanner, etc *os.Root) error {
+func (s *Setup) SetupFirewall() error {
 
 	msg := colors.Yellow("Setting up firewall (ufw)...")
 	fmt.Println(msg)
@@ -29,21 +27,21 @@ func SetupFirewall(sshPort string, scanner *bufio.Scanner, etc *os.Root) error {
 	}
 
 	name := "default/ufw"
-	data, err := etc.ReadFile(name)
+	data, err := s.Etc.ReadFile(name)
 	if err != nil {
 		return err
 	}
 
 	// Enforce IPV6 firewall rules
 	data = bytes.ReplaceAll(data, []byte("IPV6=no"), []byte("IPV6=yes"))
-	if err := utils.WriteFile(etc, name, data); err != nil {
+	if err := utils.WriteFile(s.Etc, name, data); err != nil {
 		return err
 	}
 
 	cmds := [][]string{
 		{"ufw", "default", "allow", "outgoing"},
 		{"ufw", "default", "deny", "incoming"},
-		{"ufw", "allow", fmt.Sprintf("%s/tcp", sshPort)},
+		{"ufw", "allow", fmt.Sprintf("%s/tcp", s.SSHPort)},
 		{"ufw", "allow", "http/tcp"},
 		{"ufw", "allow", "https/tcp"},
 		{"ufw", "--force", "enable"},

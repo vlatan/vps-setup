@@ -1,8 +1,6 @@
 package setup
 
 import (
-	"bufio"
-	"os"
 	"strconv"
 	"strings"
 
@@ -11,7 +9,9 @@ import (
 )
 
 // HardenSSH hardens the SSH config
-func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.Root) error {
+// This method will modify the setup state,
+// namely s.SSHPort.
+func (s *Setup) HardenSSH() error {
 
 	var sshPort string
 	prompt := "On which PORT do you want to connect via SSH [22]: "
@@ -28,7 +28,7 @@ func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.
 
 	// Keep asking the question if port is invalid
 	for {
-		sshPort = utils.AskQuestion(prompt, scanner)
+		sshPort = utils.AskQuestion(prompt, s.Scanner)
 
 		if sshPort == "" {
 			sshPort = "22"
@@ -50,13 +50,13 @@ func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.
 		"# PasswordAuthentication no",
 		"# KbdInteractiveAuthentication no",
 		"# AuthenticationMethods publickey",
-		"# AllowUsers " + username,
+		"# AllowUsers " + s.Username,
 	}
 
 	// // Write to file
 	name := "ssh/sshd_config.d/harden.conf"
 	data := []byte(strings.Join(hardenContent, "\n") + "\n")
-	if err := utils.WriteFile(etc, name, data); err != nil {
+	if err := utils.WriteFile(s.Etc, name, data); err != nil {
 		return err
 	}
 
@@ -73,8 +73,8 @@ func HardenSSH(target *string, username string, scanner *bufio.Scanner, etc *os.
 		}
 	}
 
-	// Set SSH port to target
-	*target = sshPort
+	// Set SSH port to setup struct
+	s.SSHPort = sshPort
 
 	return nil
 }

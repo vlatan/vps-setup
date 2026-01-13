@@ -1,7 +1,6 @@
 package setup
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"slices"
@@ -156,16 +155,16 @@ func (b *Bash) FormatBashrc() error {
 
 // FormatBash configures the bash experience
 // by creating custom aliases and prompt.
-func FormatBash(scanner *bufio.Scanner, home *os.Root) error {
+func (s *Setup) FormatBash() error {
 
 	prompt := "Do you want to format bash? [y/N]: "
 	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
+	start := strings.ToLower(utils.AskQuestion(prompt, s.Scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {
 		return nil
 	}
 
-	bash := NewBash(home)
+	bash := NewBash(s.Home)
 	callables := []func() error{
 		bash.CreateAliases,
 		bash.CreatePrompt,

@@ -1,9 +1,7 @@
 package setup
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -13,18 +11,18 @@ import (
 )
 
 // SetupPostfix installs Postfix and sets up SMTP relay
-func SetupPostfix(scanner *bufio.Scanner, etc *os.Root) error {
+func (s *Setup) SetupPostfix() error {
 
 	prompt := "Do you want to setup Postfix SMTP relay? [y/N]: "
 	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
+	start := strings.ToLower(utils.AskQuestion(prompt, s.Scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {
 		return nil
 	}
 
 	var domain string
 	for {
-		domain = utils.AskQuestion("MAILNAME (domain): ", scanner)
+		domain = utils.AskQuestion("MAILNAME (domain): ", s.Scanner)
 		if domain != "" {
 			break
 		}
@@ -32,7 +30,7 @@ func SetupPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 
 	var smtpHost string
 	for {
-		smtpHost = utils.AskQuestion("SMTP_HOST: ", scanner)
+		smtpHost = utils.AskQuestion("SMTP_HOST: ", s.Scanner)
 		if smtpHost != "" {
 			break
 		}
@@ -40,7 +38,7 @@ func SetupPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 
 	var smtpPort string
 	for {
-		smtpPort = utils.AskQuestion("SMTP_PORT: ", scanner)
+		smtpPort = utils.AskQuestion("SMTP_PORT: ", s.Scanner)
 		if smtpPort != "" {
 			break
 		}
@@ -100,11 +98,11 @@ func SetupPostfix(scanner *bufio.Scanner, etc *os.Root) error {
 	// Write to the file
 	name := "postfix/sasl/sasl_passwd"
 	data := fmt.Sprintf("[%s]:%s %s:%s", smtpHost, smtpPort, smtpUsername, smtpPassword)
-	if err := utils.WriteFile(etc, name, []byte(data)); err != nil {
+	if err := utils.WriteFile(s.Etc, name, []byte(data)); err != nil {
 		return err
 	}
 
-	saslPaswdFile := filepath.Join(etc.Name(), name)
+	saslPaswdFile := filepath.Join(s.Etc.Name(), name)
 	cmd = utils.Command("postmap", saslPaswdFile)
 	if err := cmd.Run(); err != nil {
 		return err

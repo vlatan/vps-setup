@@ -1,9 +1,7 @@
 package setup
 
 import (
-	"bufio"
 	"encoding/json"
-	"os"
 	"os/exec"
 	"slices"
 	"strings"
@@ -13,11 +11,11 @@ import (
 )
 
 // InstallDocker installs and configures Docker
-func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error {
+func (s *Setup) InstallDocker() error {
 
 	prompt := "Do you want to install Docker? [y/N]: "
 	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, scanner))
+	start := strings.ToLower(utils.AskQuestion(prompt, s.Scanner))
 	if !slices.Contains([]string{"yes", "y"}, start) {
 		return nil
 	}
@@ -99,7 +97,7 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 	}
 
 	// Add user to docker group
-	cmd = exec.Command("usermod", "-aG", "docker", username)
+	cmd = exec.Command("usermod", "-aG", "docker", s.Username)
 	if err := cmd.Run(); err != nil {
 		return err
 	}
@@ -124,7 +122,7 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 	// Write to the file
 	name := "docker/daemon.json"
 	data := append(jsonData, '\n')
-	if err := utils.WriteFile(etc, name, data); err != nil {
+	if err := utils.WriteFile(s.Etc, name, data); err != nil {
 		return err
 	}
 
@@ -148,7 +146,7 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 	// Write to the file
 	name = "rsyslog.d/40-docker.conf"
 	data = []byte(strings.Join(rsyslogConf, "\n") + "\n")
-	if err := utils.WriteFile(etc, name, data); err != nil {
+	if err := utils.WriteFile(s.Etc, name, data); err != nil {
 		return err
 	}
 
@@ -171,7 +169,7 @@ func InstallDocker(username string, scanner *bufio.Scanner, etc *os.Root) error 
 	// Write to the file
 	name = "logrotate.d/docker"
 	data = []byte(strings.Join(logrotateConf, "\n") + "\n")
-	if err := utils.WriteFile(etc, name, data); err != nil {
+	if err := utils.WriteFile(s.Etc, name, data); err != nil {
 		return err
 	}
 
