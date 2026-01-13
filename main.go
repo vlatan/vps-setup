@@ -17,11 +17,11 @@ import (
 
 func main() {
 
-	cfg := config.New()
-	fmt.Println("Swappiness", cfg.Swappiness)
-
 	msg := "WARNING: This script will modify the machine:"
 	fmt.Println(colors.Red(msg))
+
+	cfg := config.New()
+	defer cfg.Close()
 
 	var username, sshPort string
 	var home *os.Root
@@ -37,27 +37,27 @@ func main() {
 	primaryJobs := []utils.Job{
 		{
 			Info:     "Enable services autorestart",
-			Callable: func() error { return settings.AutoRestart(etc) },
+			Callable: func() error { return settings.AutoRestart(cfg) },
 		},
 		{
 			Info:     "Change the swappiness",
-			Callable: func() error { return settings.ChangeSwappiness(scanner, etc) },
+			Callable: func() error { return settings.ChangeSwappiness(cfg) },
 		},
 		{
 			Info:     "Attach to Ubuntu Pro",
-			Callable: func() error { return settings.AttachUbuntuPro(scanner) },
+			Callable: func() error { return settings.AttachUbuntuPro(cfg) },
 		},
 		{
 			Info:     "Set hostname",
-			Callable: func() error { return settings.SetHostname(scanner) },
+			Callable: func() error { return settings.SetHostname(cfg) },
 		},
 		{
 			Info:     "Set timezone",
-			Callable: func() error { return settings.SetTimezone(scanner) },
+			Callable: func() error { return settings.SetTimezone(cfg) },
 		},
 		{
 			Info:     "Add new user",
-			Callable: func() error { return settings.AddUser(&username, scanner) },
+			Callable: func() error { return settings.AddUser(cfg) },
 		},
 		{
 			Info:     "Harden SSH access (add commented rules)",

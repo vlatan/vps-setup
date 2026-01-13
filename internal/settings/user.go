@@ -1,20 +1,19 @@
 package settings
 
 import (
-	"bufio"
-
 	"github.com/vlatan/vps-setup/internal/colors"
+	"github.com/vlatan/vps-setup/internal/config"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // AddUser adds new user and makes that user sudoer
-func AddUser(target *string, scanner *bufio.Scanner) error {
+func AddUser(cfg *config.Config) error {
 
 	var username string
 	prompt := colors.Yellow("Provide username: ")
 
 	for {
-		username = utils.AskQuestion(prompt, scanner)
+		username = utils.AskQuestion(prompt, cfg.Scanner)
 		if username != "" {
 			break
 		}
@@ -32,8 +31,8 @@ func AddUser(target *string, scanner *bufio.Scanner) error {
 		}
 	}
 
-	// Set username to target
-	*target = username
+	// Provide the username to the config
+	cfg.Username = username
 
 	return nil
 }

@@ -1,1 +1,0 @@
-* Take arguments from .env file or environment before asking for input

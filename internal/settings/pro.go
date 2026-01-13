@@ -1,14 +1,13 @@
 package settings
 
 import (
-	"bufio"
-
 	"github.com/vlatan/vps-setup/internal/colors"
+	"github.com/vlatan/vps-setup/internal/config"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // AttachUbuntuPro attaches Ubuntu Pro subscription to the machine
-func AttachUbuntuPro(scanner *bufio.Scanner) error {
+func AttachUbuntuPro(cfg *config.Config) error {
 
 	prompt := "Provide Ubuntu Pro token [optional]: "
 	prompt = colors.Yellow(prompt)
