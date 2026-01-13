@@ -41,6 +41,7 @@ func (s *Setup) setSwappiness() {
 		return n >= 0 && n <= 100
 	}
 
+	// Check for env var swappiness first
 	if valid(s.Swappiness) {
 		return
 	}
@@ -51,6 +52,7 @@ func (s *Setup) setSwappiness() {
 	for { // Keep asking the question if swappiness is invalid
 		s.Swappiness = utils.AskQuestion(prompt, s.Scanner)
 
+		// If empty response provide default value
 		if s.Swappiness == "" {
 			s.Swappiness = "20"
 			break

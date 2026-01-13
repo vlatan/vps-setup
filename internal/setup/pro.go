@@ -34,22 +34,24 @@ func (s *Setup) AttachUbuntuPro() error {
 // setToken sets
 func (s *Setup) setUbuntuToken() error {
 
+	// Check for env var token first
 	if s.UbuntuProToken != "" {
 		return nil
 	}
 
 	prompt := "Provide Ubuntu Pro token [optional]: "
 	prompt = colors.Yellow(prompt)
-	token, err := utils.AskPassword(prompt)
+
+	var err error
+	s.UbuntuProToken, err = utils.AskPassword(prompt)
 
 	if err != nil {
 		return err
 	}
 
-	if token == "" {
+	if s.UbuntuProToken == "" {
 		return nil
 	}
 
-	s.UbuntuProToken = token
 	return nil
 }
