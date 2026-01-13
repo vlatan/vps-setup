@@ -13,19 +13,18 @@ import (
 // namely s.Username and s.Home.
 func (s *Setup) AddUser() error {
 
-	var username string
 	prompt := colors.Yellow("Provide username: ")
-
 	for {
-		username = utils.AskQuestion(prompt, s.Scanner)
-		if username != "" {
+		// Check for env var username first
+		if s.Username != "" {
 			break
 		}
+		s.Username = utils.AskQuestion(prompt, s.Scanner)
 	}
 
 	cmds := [][]string{
-		{"adduser", "--gecos", "", username},
-		{"adduser", username, "sudo"},
+		{"adduser", "--gecos", "", s.Username},
+		{"adduser", s.Username, "sudo"},
 	}
 
 	for _, cmdArgs := range cmds {
@@ -34,9 +33,6 @@ func (s *Setup) AddUser() error {
 			return err
 		}
 	}
-
-	// Provide the username to the setup
-	s.Username = username
 
 	userDir := filepath.Join("/home", s.Username)
 	home, err := os.OpenRoot(userDir)
