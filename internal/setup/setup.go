@@ -55,18 +55,20 @@ func New() *Setup {
 
 	cfg.Etc = etc
 
-	// Open /home as root
-	home, err := os.OpenRoot("/home")
-	if err != nil {
-		utils.Exit(err)
-	}
-
-	cfg.Home = home
-
 	return &cfg
 }
 
 // Close closes opened roots
 func (s *Setup) Close() error {
-	return errors.Join(s.Etc.Close(), s.Home.Close())
+	var errs []error
+
+	if s.Etc != nil {
+		errs = append(errs, s.Etc.Close())
+	}
+
+	if s.Home != nil {
+		errs = append(errs, s.Home.Close())
+	}
+
+	return errors.Join(errs...)
 }
