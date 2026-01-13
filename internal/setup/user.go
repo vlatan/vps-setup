@@ -2,18 +2,17 @@ package setup
 
 import (
 	"github.com/vlatan/vps-setup/internal/colors"
-	"github.com/vlatan/vps-setup/internal/config"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // AddUser adds new user and makes that user sudoer
-func AddUser(cfg *config.Config) error {
+func (s *Setup) AddUser() error {
 
 	var username string
 	prompt := colors.Yellow("Provide username: ")
 
 	for {
-		username = utils.AskQuestion(prompt, cfg.Scanner)
+		username = utils.AskQuestion(prompt, s.Scanner)
 		if username != "" {
 			break
 		}
@@ -31,8 +30,8 @@ func AddUser(cfg *config.Config) error {
 		}
 	}
 
-	// Provide the username to the config
-	cfg.Username = username
+	// Provide the username to the setup struct
+	s.Username = username
 
 	return nil
 }

@@ -6,14 +6,13 @@ import (
 	"strconv"
 
 	"github.com/vlatan/vps-setup/internal/colors"
-	"github.com/vlatan/vps-setup/internal/config"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // ChangeSwappiness changes the system swappiness,
 // which means changing the free memory treshold (%) at which
 // the swap is going to begin to be utilized.
-func ChangeSwappiness(cfg *config.Config) error {
+func (s *Setup) ChangeSwappiness() error {
 
 	var swappiness string
 	prompt := "Provide system swappines value 0-100 [20]: "
@@ -30,7 +29,7 @@ func ChangeSwappiness(cfg *config.Config) error {
 
 	// Keep asking the question if swappiness is invalid
 	for {
-		swappiness = utils.AskQuestion(prompt, cfg.Scanner)
+		swappiness = utils.AskQuestion(prompt, s.Scanner)
 
 		if swappiness == "" {
 			swappiness = "20"
@@ -45,12 +44,12 @@ func ChangeSwappiness(cfg *config.Config) error {
 	// Write to the file
 	name := "sysctl.d/99-my-swappiness.conf"
 	data := fmt.Appendf([]byte{}, "vm.swappiness = %s\n", swappiness)
-	if err := utils.WriteFile(cfg.Etc, name, data); err != nil {
+	if err := utils.WriteFile(s.Etc, name, data); err != nil {
 		return err
 	}
 
 	// Load our config
-	confPath := filepath.Join(cfg.Etc.Name(), name)
+	confPath := filepath.Join(s.Etc.Name(), name)
 	cmd := utils.Command("sysctl", "-p", confPath)
 	return cmd.Run()
 }

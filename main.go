@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/vlatan/vps-setup/internal/colors"
-	"github.com/vlatan/vps-setup/internal/config"
 	"github.com/vlatan/vps-setup/internal/setup"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
@@ -20,8 +19,8 @@ func main() {
 	msg := "WARNING: This script will modify the machine:"
 	fmt.Println(colors.Red(msg))
 
-	cfg := config.New()
-	defer cfg.Close()
+	s := setup.New()
+	defer s.Close()
 
 	var username, sshPort string
 	var home *os.Root
@@ -37,27 +36,27 @@ func main() {
 	primaryJobs := []utils.Job{
 		{
 			Info:     "Enable services autorestart",
-			Callable: func() error { return setup.AutoRestart(cfg) },
+			Callable: func() error { return s.AutoRestart() },
 		},
 		{
 			Info:     "Change the swappiness",
-			Callable: func() error { return setup.ChangeSwappiness(cfg) },
+			Callable: func() error { return s.ChangeSwappiness() },
 		},
 		{
 			Info:     "Attach to Ubuntu Pro",
-			Callable: func() error { return setup.AttachUbuntuPro(cfg) },
+			Callable: func() error { return s.AttachUbuntuPro() },
 		},
 		{
 			Info:     "Set hostname",
-			Callable: func() error { return setup.SetHostname(cfg) },
+			Callable: func() error { return s.SetHostname() },
 		},
 		{
 			Info:     "Set timezone",
-			Callable: func() error { return setup.SetTimezone(cfg) },
+			Callable: func() error { return s.SetTimezone() },
 		},
 		{
 			Info:     "Add new user",
-			Callable: func() error { return setup.AddUser(cfg) },
+			Callable: func() error { return s.AddUser() },
 		},
 		{
 			Info:     "Harden SSH access (add commented rules)",
