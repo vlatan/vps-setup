@@ -22,6 +22,7 @@ type Setup struct {
 	Hostname        string `env:"HOSTNAME"`
 	Timezone        string `env:"TIMEZONE"`
 	Username        string `env:"USERNAME"`
+	Password        string `env:"PASSWORD"`
 	SSHPort         string `env:"SSH_PORT"`
 	PostfixMailname string `env:"POSTFIX_MAILNAME"`
 	SMTPHost        string `env:"SMTP_HOST"`

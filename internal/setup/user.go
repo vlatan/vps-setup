@@ -1,8 +1,11 @@
 package setup
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
@@ -22,25 +25,33 @@ func (s *Setup) AddUser() error {
 		s.Username = utils.AskQuestion(prompt, s.Scanner)
 	}
 
-	cmds := [][]string{
-		{"adduser", "--gecos", "", s.Username},
-		{"adduser", s.Username, "sudo"},
+	var cmds []*exec.Cmd
+	if s.Password != "" {
+		cmd1 := exec.Command("adduser", "--gecos", "", "--disabled-password", s.Username)
+		cmd2 := exec.Command("chpasswd")
+		cmd2.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", s.Username, s.Password))
+		cmds = append(cmds, cmd1, cmd2)
+	} else {
+		cmds = append(cmds, exec.Command("adduser", "--gecos", "", s.Username))
 	}
 
-	for _, cmdArgs := range cmds {
-		cmd := utils.Command(cmdArgs[0], cmdArgs[1:]...)
+	cmds = append(cmds, exec.Command("adduser", s.Username, "sudo"))
+
+	fmt.Println("Adding new user...")
+	for _, cmd := range cmds {
 		if err := cmd.Run(); err != nil {
 			return err
 		}
 	}
 
+	// Open the user dir as root
 	userDir := filepath.Join("/home", s.Username)
 	home, err := os.OpenRoot(userDir)
 	if err != nil {
 		return err
 	}
 
-	// Provide the user home open root to the setup
+	// Provide the user opened root to the setup
 	s.Home = home
 
 	return nil
