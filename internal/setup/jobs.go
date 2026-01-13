@@ -12,60 +12,62 @@ type Job struct {
 }
 
 // GetJobs returns a slice of all the jobs to be done.
-// The order of some methods is important
+// The order of the methods is important, because
+// some of them change the state of the setup and others
+// need that new state.
 func (s *Setup) GetJobs() []Job {
 	return []Job{
 		{
 			Info:     "Enable services autorestart",
-			Callable: func() error { return s.AutoRestart() },
+			Callable: s.AutoRestart,
 		},
 		{
 			Info:     "Change the swappiness",
-			Callable: func() error { return s.ChangeSwappiness() },
+			Callable: s.ChangeSwappiness,
 		},
 		{
 			Info:     "Attach to Ubuntu Pro",
-			Callable: func() error { return s.AttachUbuntuPro() },
+			Callable: s.AttachUbuntuPro,
 		},
 		{
 			Info:     "Set hostname",
-			Callable: func() error { return s.SetHostname() },
+			Callable: s.SetHostname,
 		},
 		{
 			Info:     "Set timezone",
-			Callable: func() error { return s.SetTimezone() },
+			Callable: s.SetTimezone,
 		},
 		{
 			Info:     "Add new user",
-			Callable: func() error { return s.AddUser() },
+			Callable: s.AddUser,
 		},
 		{
 			Info:     "Harden SSH access (add commented rules)",
-			Callable: func() error { return s.HardenSSH() },
+			Callable: s.HardenSSH,
 		},
 		{
 			Info:     "Setup Postfix SMTP relay",
-			Callable: func() error { return s.SetupPostfix() },
+			Callable: s.SetupPostfix,
 		},
 		{
 			Info:     "Setup ufw (uncomplicated firewall)",
-			Callable: func() error { return s.SetupFirewall() },
+			Callable: s.SetupFirewall,
 		},
 		{
 			Info:     "Install and configure Fail2Ban",
-			Callable: func() error { return s.InstallFail2Ban() },
+			Callable: s.InstallFail2Ban,
 		},
 		{
 			Info:     "Install and configure Docker",
-			Callable: func() error { return s.InstallDocker() },
+			Callable: s.InstallDocker,
 		},
 		{
 			Info:     "Format the bash prompt",
-			Callable: func() error { return s.FormatBash() },
+			Callable: s.FormatBash,
 		},
 		{
 			Info:     "Create bare git repository",
-			Callable: func() error { return s.SetupGitRepo() },
+			Callable: s.SetupGitRepo,
 		},
 	}
 }
