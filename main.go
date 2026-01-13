@@ -10,11 +10,15 @@ import (
 	"time"
 
 	"github.com/vlatan/vps-setup/internal/colors"
+	"github.com/vlatan/vps-setup/internal/config"
 	"github.com/vlatan/vps-setup/internal/settings"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 func main() {
+
+	cfg := config.New()
+	fmt.Println("Swappiness", cfg.Swappiness)
 
 	msg := "WARNING: This script will modify the machine:"
 	fmt.Println(colors.Red(msg))
