@@ -35,6 +35,7 @@ func (s *Setup) AddUser() error {
 		cmds = append(cmds, exec.Command("adduser", "--gecos", "", s.Username))
 	}
 
+	// Add user to sudo group, make them sudoer
 	cmds = append(cmds, exec.Command("adduser", s.Username, "sudo"))
 
 	fmt.Println("Adding new user...")
