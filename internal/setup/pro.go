@@ -1,4 +1,4 @@
-package settings
+package setup
 
 import (
 	"github.com/vlatan/vps-setup/internal/colors"

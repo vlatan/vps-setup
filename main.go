@@ -11,7 +11,7 @@ import (
 
 	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/config"
-	"github.com/vlatan/vps-setup/internal/settings"
+	"github.com/vlatan/vps-setup/internal/setup"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
@@ -37,47 +37,47 @@ func main() {
 	primaryJobs := []utils.Job{
 		{
 			Info:     "Enable services autorestart",
-			Callable: func() error { return settings.AutoRestart(cfg) },
+			Callable: func() error { return setup.AutoRestart(cfg) },
 		},
 		{
 			Info:     "Change the swappiness",
-			Callable: func() error { return settings.ChangeSwappiness(cfg) },
+			Callable: func() error { return setup.ChangeSwappiness(cfg) },
 		},
 		{
 			Info:     "Attach to Ubuntu Pro",
-			Callable: func() error { return settings.AttachUbuntuPro(cfg) },
+			Callable: func() error { return setup.AttachUbuntuPro(cfg) },
 		},
 		{
 			Info:     "Set hostname",
-			Callable: func() error { return settings.SetHostname(cfg) },
+			Callable: func() error { return setup.SetHostname(cfg) },
 		},
 		{
 			Info:     "Set timezone",
-			Callable: func() error { return settings.SetTimezone(cfg) },
+			Callable: func() error { return setup.SetTimezone(cfg) },
 		},
 		{
 			Info:     "Add new user",
-			Callable: func() error { return settings.AddUser(cfg) },
+			Callable: func() error { return setup.AddUser(cfg) },
 		},
 		{
 			Info:     "Harden SSH access (add commented rules)",
-			Callable: func() error { return settings.HardenSSH(&sshPort, username, scanner, etc) },
+			Callable: func() error { return setup.HardenSSH(&sshPort, username, scanner, etc) },
 		},
 		{
 			Info:     "Setup Postfix SMTP relay",
-			Callable: func() error { return settings.SetupPostfix(scanner, etc) },
+			Callable: func() error { return setup.SetupPostfix(scanner, etc) },
 		},
 		{
 			Info:     "Setup ufw (uncomplicated firewall)",
-			Callable: func() error { return settings.SetupFirewall(sshPort, scanner, etc) },
+			Callable: func() error { return setup.SetupFirewall(sshPort, scanner, etc) },
 		},
 		{
 			Info:     "Install and configure Fail2Ban",
-			Callable: func() error { return settings.InstallFail2Ban(sshPort, scanner, etc) },
+			Callable: func() error { return setup.InstallFail2Ban(sshPort, scanner, etc) },
 		},
 		{
 			Info:     "Install and configure Docker",
-			Callable: func() error { return settings.InstallDocker(username, scanner, etc) },
+			Callable: func() error { return setup.InstallDocker(username, scanner, etc) },
 		},
 	}
 
@@ -85,11 +85,11 @@ func main() {
 	secondaryJobs := []utils.Job{
 		{
 			Info:     "Format the bash prompt",
-			Callable: func() error { return settings.FormatBash(scanner, home) },
+			Callable: func() error { return setup.FormatBash(scanner, home) },
 		},
 		{
 			Info:     "Create bare git repository",
-			Callable: func() error { return settings.SetupGitRepo(username, scanner, home) },
+			Callable: func() error { return setup.SetupGitRepo(username, scanner, home) },
 		},
 	}
 
