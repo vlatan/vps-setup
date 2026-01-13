@@ -19,7 +19,7 @@ func (s *Setup) SetHostname() error {
 		s.Hostname = utils.AskQuestion(prompt, s.Scanner)
 	}
 
-	fmt.Println(colors.Yellow("Seting up hostname..."))
+	fmt.Println("Setting up hostname...")
 	cmd := utils.Command("hostnamectl", "set-hostname", s.Hostname)
 	return cmd.Run()
 }

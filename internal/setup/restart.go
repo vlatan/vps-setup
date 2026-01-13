@@ -3,7 +3,6 @@ package setup
 import (
 	"fmt"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
@@ -11,8 +10,7 @@ import (
 // Adds $nrconf{restart} = 'a'; to that file.
 // This will set services to automatically restart after update/upgrade.
 func (s *Setup) AutoRestart() error {
-	msg := colors.Yellow("Seting up services autorestart...")
-	fmt.Println(msg)
+	fmt.Println("Seting up services autorestart...")
 
 	// Write to file
 	name := "needrestart/conf.d/no-prompt.conf"

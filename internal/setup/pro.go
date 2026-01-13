@@ -14,7 +14,11 @@ func (s *Setup) AttachUbuntuPro() error {
 		return err
 	}
 
-	fmt.Println(colors.Yellow("Attaching Ubuntu Pro..."))
+	if s.UbuntuProToken == "" {
+		return nil
+	}
+
+	fmt.Println("Attaching Ubuntu Pro...")
 
 	cmds := [][]string{
 		{"apt-get", "install", "-y", "ubuntu-advantage-tools"},
@@ -47,10 +51,6 @@ func (s *Setup) setUbuntuToken() error {
 
 	if err != nil {
 		return err
-	}
-
-	if s.UbuntuProToken == "" {
-		return nil
 	}
 
 	return nil

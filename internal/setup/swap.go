@@ -15,7 +15,7 @@ import (
 func (s *Setup) ChangeSwappiness() error {
 
 	s.setSwappiness()
-	fmt.Println(colors.Yellow("Seting up the swappiness..."))
+	fmt.Println("Setting up the swappiness...")
 
 	// Write to the file
 	name := "sysctl.d/99-my-swappiness.conf"
