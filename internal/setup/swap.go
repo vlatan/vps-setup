@@ -25,11 +25,11 @@ func (s *Setup) ChangeSwappiness() error {
 
 	// If swappiness is not valid ask the user
 	if !valid(s.Swappiness) {
-		prompt := "Provide system swappines value 0-100 [20]: "
+
+		prompt := "Provide system swappiness value 0-100 [20]: "
 		prompt = colors.Yellow(prompt)
 
-		// Keep asking the question if swappiness is invalid
-		for {
+		for { // Keep asking the question if swappiness is invalid
 			s.Swappiness = utils.AskQuestion(prompt, s.Scanner)
 
 			if s.Swappiness == "" {
@@ -41,6 +41,8 @@ func (s *Setup) ChangeSwappiness() error {
 				break
 			}
 		}
+	} else {
+		fmt.Println(colors.Yellow("Seting up the swappiness..."))
 	}
 
 	// Write to the file
