@@ -30,6 +30,7 @@ func (s *Setup) ChangeSwappiness() error {
 	return cmd.Run()
 }
 
+// setSwappiness sets the swappiness value to the setup struct
 func (s *Setup) setSwappiness() {
 
 	// Helper function to check if the swappiness input is valid
@@ -41,7 +42,7 @@ func (s *Setup) setSwappiness() {
 		return n >= 0 && n <= 100
 	}
 
-	// Check for env var swappiness first
+	// Check if a valid swappiness value is already set
 	if valid(s.Swappiness) {
 		return
 	}

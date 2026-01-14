@@ -24,6 +24,7 @@ type Setup struct {
 	Username        string `env:"USERNAME"`
 	Password        string `env:"PASSWORD"`
 	SSHPort         string `env:"SSH_PORT"`
+	SSHPubKey       string `env:"SSH_PUBKEY"`
 	PostfixMailname string `env:"POSTFIX_MAILNAME"`
 	SMTPHost        string `env:"SMTP_HOST"`
 	SMTPPort        string `env:"SMTP_PORT"`

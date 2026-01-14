@@ -1,6 +1,7 @@
 package setup
 
 import (
+	"fmt"
 	"os/user"
 	"path/filepath"
 	"strconv"
@@ -16,54 +17,44 @@ import (
 // for the user.
 func (s *Setup) HardenSSH() error {
 
-	var sshPort string
-	prompt := "On which PORT do you want to connect via SSH [22]: "
-	prompt = colors.Yellow(prompt)
+	s.setSSHPort()
+	s.setSSHPubKey()
+	fmt.Println("Hardening SSH access...")
 
-	// Function to check if the port input is valid
-	valid := func(s string) bool {
-		n, err := strconv.Atoi(s)
-		if err != nil {
-			return false
-		}
-		return n >= 0 && n <= 65535
-	}
-
-	// Keep asking the question if port is invalid
-	for {
-		sshPort = utils.AskQuestion(prompt, s.Scanner)
-
-		if sshPort == "" {
-			sshPort = "22"
-			break
-		}
-
-		if valid(sshPort) {
-			break
-		}
-	}
-
-	// Only the port is not commented
 	hardenContent := []string{
-		"Port " + sshPort,
-		"# UsePAM no",
-		"# AddressFamily inet",
-		"# PermitRootLogin no",
-		"# PermitEmptyPasswords no",
-		"# PasswordAuthentication no",
-		"# KbdInteractiveAuthentication no",
-		"# AuthenticationMethods publickey",
-		"# AllowUsers " + s.Username,
+		"Port " + s.SSHPort,
+		"AddressFamily inet",
+		"PermitRootLogin no",
+		"PermitEmptyPasswords no",
+		"AllowUsers " + fmt.Sprintf("%s@%s", s.Username, s.Hostname),
 	}
 
-	// // Write to file
+	pound := "# "
+	if s.SSHPubKey != "" {
+		pound = ""
+		if err := s.addSSHPubKey(); err != nil {
+			return err
+		}
+	}
+
+	rest := []string{
+		pound + "UsePAM no",
+		pound + "PasswordAuthentication no",
+		pound + "KbdInteractiveAuthentication no",
+		pound + "AuthenticationMethods publickey",
+	}
+
+	hardenContent = append(hardenContent, rest...)
+
+	// Write to file
 	name := "ssh/sshd_config.d/harden.conf"
 	data := []byte(strings.Join(hardenContent, "\n") + "\n")
 	if err := utils.WriteFile(s.Etc, name, data); err != nil {
 		return err
 	}
 
-	// Restart SSH, If SSH port is changed we need daemon-reload too
+	// Restart SSH
+	// If SSH port is changed we need daemon-reload too
 	cmds := [][]string{
 		{"systemctl", "daemon-reload"},
 		{"systemctl", "restart", "ssh"},
@@ -76,14 +67,73 @@ func (s *Setup) HardenSSH() error {
 		}
 	}
 
-	// Set SSH port to setup struct
-	s.SSHPort = sshPort
-
 	return nil
 }
 
+func (s *Setup) setSSHPort() {
+
+	// Helper function to check if the port input is valid
+	valid := func(s string) bool {
+		n, err := strconv.Atoi(s)
+		if err != nil {
+			return false
+		}
+		return n >= 0 && n <= 65535
+	}
+
+	// Check if a valid SSH port value is already set
+	if valid(s.SSHPort) {
+		return
+	}
+
+	prompt := colors.Yellow("Provide SSH port [22]: ")
+	for { // Keep asking the question if SSH port is invalid
+		s.SSHPort = utils.AskQuestion(prompt, s.Scanner)
+
+		// If empty response provide default value
+		if s.SSHPort == "" {
+			s.SSHPort = "22"
+			break
+		}
+
+		if valid(s.SSHPort) {
+			break
+		}
+	}
+}
+
+// setSSHPubKey sets the SSH public key value to the setup struct
+func (s *Setup) setSSHPubKey() {
+
+	// Helper function to check if the SSH public key input is valid
+	valid := func(s string) bool {
+		parts := strings.Split(s, " ")
+		return len(parts) >= 2
+	}
+
+	// Check if a valid SSH public key value is already set
+	if valid(s.SSHPubKey) {
+		return
+	}
+
+	prompt := colors.Yellow("Provide SSH public key [optional]: ")
+	for { // Keep asking the question if SSH public key is invalid
+		s.SSHPubKey = utils.AskQuestion(prompt, s.Scanner)
+
+		// If empty response skip
+		if s.SSHPubKey == "" {
+			break
+		}
+
+		if valid(s.SSHPubKey) {
+			break
+		}
+	}
+
+}
+
 // addSSHKey writes an SSH public key to user's authorized_keys file
-func (s *Setup) addSSHKey(pubKey string) error {
+func (s *Setup) addSSHPubKey() error {
 
 	// Get user's UID and GID
 	u, err := user.Lookup(s.Username)
@@ -110,7 +160,7 @@ func (s *Setup) addSSHKey(pubKey string) error {
 	}
 
 	// Write the public key to authorized_keys
-	data := []byte(strings.TrimSpace(pubKey) + "\n")
+	data := []byte(strings.TrimSpace(s.SSHPubKey) + "\n")
 	if err := s.Home.WriteFile(authKeysFile, data, 0600); err != nil {
 		return err
 	}
