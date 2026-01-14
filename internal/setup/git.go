@@ -20,6 +20,8 @@ func (s *Setup) SetupGitRepo() error {
 		return nil
 	}
 
+	fmt.Println("Setting up Git repo...")
+
 	// Create the checkout dir
 	if err := s.Home.MkdirAll(checkoutDirName, 0755); err != nil {
 		return err
@@ -59,7 +61,11 @@ func (s *Setup) SetupGitRepo() error {
 	hookFileAbsPath := filepath.Join(s.Home.Name(), hookFile)
 	cmds := [][]string{
 		{"chmod", "+x", hookFileAbsPath},
-		{"chown", "-R", s.Username + ":" + s.Username, checkoutDirAbsPath, repoDirAbsPath},
+		{
+			"chown", "-R",
+			s.Username + ":" + s.Username,
+			checkoutDirAbsPath, repoDirAbsPath,
+		},
 	}
 
 	for _, cmdArgs := range cmds {
