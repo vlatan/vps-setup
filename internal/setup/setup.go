@@ -15,13 +15,13 @@ import (
 type Setup struct {
 
 	// Env vars
-	Swappiness      string `env:"SWAPPINESS"`
+	Swappiness      string `env:"SWAPPINESS" envDefault:"20"`
 	UbuntuProToken  string `env:"UBUNTU_PRO_TOKEN"`
 	Hostname        string `env:"HOSTNAME"`
-	Timezone        string `env:"TIMEZONE"`
+	Timezone        string `env:"TIMEZONE" envDefault:"UTC"`
 	Username        string `env:"USERNAME"`
 	Password        string `env:"PASSWORD"`
-	SSHPort         string `env:"SSH_PORT"`
+	SSHPort         string `env:"SSH_PORT" envDefault:"22"`
 	SSHPubKey       string `env:"SSH_PUBKEY"`
 	PostfixMailname string `env:"POSTFIX_MAILNAME"`
 	SMTPHost        string `env:"SMTP_HOST"`
