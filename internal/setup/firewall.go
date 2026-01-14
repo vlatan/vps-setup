@@ -11,7 +11,6 @@ import (
 func (s *Setup) SetupFirewall() error {
 
 	fmt.Println("Setting up firewall (ufw)...")
-
 	msg := "Note: Exposed ports using Docker will bypass the ufw rules"
 	fmt.Println(msg)
 

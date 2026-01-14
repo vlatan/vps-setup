@@ -19,6 +19,7 @@ func (s *Setup) InstallFail2Ban() error {
 		return nil
 	}
 
+	fmt.Println("Setting up Fail2Ban...")
 	cmd := utils.Command("apt-get", "install", "-y", "fail2ban")
 	if err := cmd.Run(); err != nil {
 		return err
