@@ -148,10 +148,10 @@ func (s *Setup) addSSHPubKey() error {
 	}
 
 	// Change ownership of the .ssh directory
-	if err := s.Home.Chown(sshDir, s.uid, s.gid); err != nil {
+	if err := s.Home.Chown(sshDir, s.Uid, s.Gid); err != nil {
 		return err
 	}
 
 	// Change ownership of the authorized_keys
-	return s.Home.Chown(authKeysFile, s.uid, s.gid)
+	return s.Home.Chown(authKeysFile, s.Uid, s.Gid)
 }

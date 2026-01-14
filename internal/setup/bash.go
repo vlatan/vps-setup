@@ -11,22 +11,22 @@ import (
 )
 
 type Bash struct {
-	root    *os.Root
-	uid     int
-	gid     int
-	aliases string
-	prompt  string
-	bashrc  string
+	Home    *os.Root
+	Uid     int
+	Gid     int
+	Aliases string
+	Prompt  string
+	Bashrc  string
 }
 
-func NewBash(root *os.Root, uid, gid int) *Bash {
+func NewBash(home *os.Root, uid, gid int) *Bash {
 	return &Bash{
-		root:    root,
-		uid:     uid,
-		gid:     gid,
-		aliases: ".bash_aliases",
-		prompt:  ".bash_prompt",
-		bashrc:  ".bashrc",
+		Home:    home,
+		Uid:     uid,
+		Gid:     gid,
+		Aliases: ".bash_aliases",
+		Prompt:  ".bash_prompt",
+		Bashrc:  ".bashrc",
 	}
 }
 
@@ -66,12 +66,12 @@ func (b *Bash) CreateAliases() error {
 	}
 
 	data := []byte(strings.Join(aliasesContent, "\n") + "\n")
-	if err := utils.WriteFile(b.root, b.aliases, data); err != nil {
+	if err := utils.WriteFile(b.Home, b.Aliases, data); err != nil {
 		return err
 	}
 
 	// Change ownership of the aliases file
-	if err := b.root.Chown(b.aliases, b.uid, b.gid); err != nil {
+	if err := b.Home.Chown(b.Aliases, b.Uid, b.Gid); err != nil {
 		return err
 	}
 
@@ -116,12 +116,12 @@ func (b *Bash) CreatePrompt() error {
 	}
 
 	data := []byte(strings.Join(promptContent, "\n") + "\n")
-	if err := utils.WriteFile(b.root, b.prompt, data); err != nil {
+	if err := utils.WriteFile(b.Home, b.Prompt, data); err != nil {
 		return err
 	}
 
 	// Change ownership of the custom prompt file
-	if err := b.root.Chown(b.prompt, b.uid, b.gid); err != nil {
+	if err := b.Home.Chown(b.Prompt, b.Uid, b.Gid); err != nil {
 		return err
 	}
 
@@ -153,7 +153,7 @@ func (b *Bash) FormatBashrc() error {
 
 	// Append the content to .bashrc
 	flag := os.O_APPEND | os.O_CREATE | os.O_WRONLY
-	file, err := b.root.OpenFile(b.bashrc, flag, 0644)
+	file, err := b.Home.OpenFile(b.Bashrc, flag, 0644)
 	if err != nil {
 		return err
 	}
@@ -165,7 +165,7 @@ func (b *Bash) FormatBashrc() error {
 	}
 
 	// Change ownership of the custom prompt file
-	if err := b.root.Chown(b.bashrc, b.uid, b.gid); err != nil {
+	if err := b.Home.Chown(b.Bashrc, b.Uid, b.Gid); err != nil {
 		return err
 	}
 
@@ -185,7 +185,7 @@ func (s *Setup) FormatBash() error {
 
 	fmt.Println("Formating the bash prompt...")
 
-	bash := NewBash(s.Home, s.uid, s.gid)
+	bash := NewBash(s.Home, s.Uid, s.Gid)
 	callables := []func() error{
 		bash.CreateAliases,
 		bash.CreatePrompt,

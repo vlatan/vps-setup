@@ -58,7 +58,7 @@ func (s *Setup) AddUser() error {
 		return err
 	}
 
-	s.gid, err = strconv.Atoi(u.Gid)
+	s.Gid, err = strconv.Atoi(u.Gid)
 	if err != nil {
 		return err
 	}
