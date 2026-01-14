@@ -51,6 +51,4 @@ func (s *Setup) Run() {
 		colors.Green("with user"),
 		colors.Yellow(s.Username)+colors.Green("."),
 	)
-	msg = "Make sure you complete the setup according to the documentaion."
-	fmt.Println(colors.Green(msg))
 }
