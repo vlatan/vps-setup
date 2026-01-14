@@ -4,17 +4,15 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // SetupFirewall sets ap an uncomplicated firewall (ufw) on the machine
 func (s *Setup) SetupFirewall() error {
 
-	msg := colors.Yellow("Setting up firewall (ufw)...")
-	fmt.Println(msg)
+	fmt.Println("Setting up firewall (ufw)...")
 
-	msg = "Note: Exposed ports using Docker will bypass the ufw rules"
+	msg := "Note: Exposed ports using Docker will bypass the ufw rules"
 	fmt.Println(msg)
 
 	url := "https://docs.docker.com/engine/install/ubuntu/#firewall-limitations"
