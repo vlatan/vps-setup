@@ -33,11 +33,9 @@ type Setup struct {
 	GitRepoName     string `env:"GIT_REPO_NAME"`
 
 	// Dynamic fields
-	Scanner *bufio.Scanner
-	Etc     *os.Root
-	Home    *os.Root
-	Uid     int
-	Gid     int
+	Scanner   *bufio.Scanner
+	Etc, Home *os.Root
+	Uid, Gid  int
 }
 
 // New creates new config object
