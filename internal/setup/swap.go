@@ -23,7 +23,7 @@ func (s *Setup) ChangeSwappiness() error {
 	}
 
 	// Check if the swappiness is valid
-	if valid(s.Swappiness) {
+	if !valid(s.Swappiness) {
 		return fmt.Errorf("invalid swappiness: %s", s.Swappiness)
 	}
 
