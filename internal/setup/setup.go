@@ -36,6 +36,8 @@ type Setup struct {
 	Scanner *bufio.Scanner
 	Etc     *os.Root
 	Home    *os.Root
+	uid     int
+	gid     int
 }
 
 // New creates new config object

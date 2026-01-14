@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/vlatan/vps-setup/internal/colors"
@@ -43,6 +45,22 @@ func (s *Setup) AddUser() error {
 		if err := cmd.Run(); err != nil {
 			return err
 		}
+	}
+
+	// Get and set user's UID and GID
+	u, err := user.Lookup(s.Username)
+	if err != nil {
+		return err
+	}
+
+	s.uid, err = strconv.Atoi(u.Uid)
+	if err != nil {
+		return err
+	}
+
+	s.gid, err = strconv.Atoi(u.Gid)
+	if err != nil {
+		return err
 	}
 
 	// Open the user dir as root

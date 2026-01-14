@@ -12,14 +12,18 @@ import (
 
 type Bash struct {
 	root    *os.Root
+	uid     int
+	gid     int
 	aliases string
 	prompt  string
 	bashrc  string
 }
 
-func NewBash(root *os.Root) *Bash {
+func NewBash(root *os.Root, uid, gid int) *Bash {
 	return &Bash{
 		root:    root,
+		uid:     uid,
+		gid:     gid,
 		aliases: ".bash_aliases",
 		prompt:  ".bash_prompt",
 		bashrc:  ".bashrc",
@@ -63,6 +67,11 @@ func (b *Bash) CreateAliases() error {
 
 	data := []byte(strings.Join(aliasesContent, "\n") + "\n")
 	if err := utils.WriteFile(b.root, b.aliases, data); err != nil {
+		return err
+	}
+
+	// Change ownership of the aliases file
+	if err := b.root.Chown(b.aliases, b.uid, b.gid); err != nil {
 		return err
 	}
 
@@ -111,6 +120,11 @@ func (b *Bash) CreatePrompt() error {
 		return err
 	}
 
+	// Change ownership of the custom prompt file
+	if err := b.root.Chown(b.prompt, b.uid, b.gid); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -150,6 +164,11 @@ func (b *Bash) FormatBashrc() error {
 		return err
 	}
 
+	// Change ownership of the custom prompt file
+	if err := b.root.Chown(b.bashrc, b.uid, b.gid); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -166,7 +185,7 @@ func (s *Setup) FormatBash() error {
 
 	fmt.Println("Formating the bash prompt...")
 
-	bash := NewBash(s.Home)
+	bash := NewBash(s.Home, s.uid, s.gid)
 	callables := []func() error{
 		bash.CreateAliases,
 		bash.CreatePrompt,

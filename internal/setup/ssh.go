@@ -2,7 +2,6 @@ package setup
 
 import (
 	"fmt"
-	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -134,22 +133,6 @@ func (s *Setup) setSSHPubKey() {
 // addSSHPubKey writes an SSH public key to user's authorized_keys file
 func (s *Setup) addSSHPubKey() error {
 
-	// Get user's UID and GID
-	u, err := user.Lookup(s.Username)
-	if err != nil {
-		return err
-	}
-
-	uid, err := strconv.Atoi(u.Uid)
-	if err != nil {
-		return err
-	}
-
-	gid, err := strconv.Atoi(u.Gid)
-	if err != nil {
-		return err
-	}
-
 	sshDir := ".ssh"
 	authKeysFile := filepath.Join(sshDir, "authorized_keys")
 
@@ -165,10 +148,10 @@ func (s *Setup) addSSHPubKey() error {
 	}
 
 	// Change ownership of the .ssh directory
-	if err := s.Home.Chown(sshDir, uid, gid); err != nil {
+	if err := s.Home.Chown(sshDir, s.uid, s.gid); err != nil {
 		return err
 	}
 
 	// Change ownership of the authorized_keys
-	return s.Home.Chown(authKeysFile, uid, gid)
+	return s.Home.Chown(authKeysFile, s.uid, s.gid)
 }
