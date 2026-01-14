@@ -25,7 +25,7 @@ func (s *Setup) HardenSSH() error {
 		"AddressFamily inet",
 		"PermitRootLogin no",
 		"PermitEmptyPasswords no",
-		"AllowUsers " + fmt.Sprintf("%s@%s", s.Username, s.Hostname),
+		"AllowUsers " + s.Username,
 	}
 
 	pound := "# "
@@ -131,7 +131,7 @@ func (s *Setup) setSSHPubKey() {
 
 }
 
-// addSSHKey writes an SSH public key to user's authorized_keys file
+// addSSHPubKey writes an SSH public key to user's authorized_keys file
 func (s *Setup) addSSHPubKey() error {
 
 	// Get user's UID and GID
