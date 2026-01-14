@@ -13,8 +13,7 @@ import (
 
 // HardenSSH hardens the SSH config
 // This method will modify the setup state,
-// namely assign s.SSHPort and optionally add an SSH public key
-// for the user.
+// namely assign s.SSHPort and optionally s.SSHPubKey
 func (s *Setup) HardenSSH() error {
 
 	s.setSSHPort()
