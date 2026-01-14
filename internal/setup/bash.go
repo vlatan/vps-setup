@@ -164,6 +164,8 @@ func (s *Setup) FormatBash() error {
 		return nil
 	}
 
+	fmt.Println("Formating the bash prompt...")
+
 	bash := NewBash(s.Home)
 	callables := []func() error{
 		bash.CreateAliases,

@@ -2,6 +2,7 @@ package setup
 
 import (
 	"encoding/json"
+	"fmt"
 	"os/exec"
 	"slices"
 	"strings"
@@ -19,6 +20,8 @@ func (s *Setup) InstallDocker() error {
 	if !slices.Contains([]string{"yes", "y"}, start) {
 		return nil
 	}
+
+	fmt.Println("Setting up Docker...")
 
 	// Install using the APT repository
 	// https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
