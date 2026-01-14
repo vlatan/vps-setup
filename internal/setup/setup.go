@@ -3,11 +3,9 @@ package setup
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/caarlos0/env/v11"
-	"github.com/vlatan/vps-setup/internal/utils"
 
 	// Autoload env vars from .env file
 	// Will not override existing env vars
@@ -39,12 +37,12 @@ type Setup struct {
 }
 
 // New creates new config object
-func New() *Setup {
+func New() (*Setup, error) {
 
 	// Parse the config from the environment
 	var cfg Setup
 	if err := env.Parse(&cfg); err != nil {
-		fmt.Println("Unable to parse environment variables")
+		return nil, err
 	}
 
 	cfg.Scanner = bufio.NewScanner(os.Stdin)
@@ -52,11 +50,11 @@ func New() *Setup {
 	// Open /etc as root
 	etc, err := os.OpenRoot("/etc")
 	if err != nil {
-		utils.Exit(err)
+		return nil, err
 	}
 
 	cfg.Etc = etc
-	return &cfg
+	return &cfg, nil
 }
 
 // Close closes opened roots
