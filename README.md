@@ -42,28 +42,42 @@ multipass purge
 
 ## Run the Script on a Remote Machine
 
-First of course you need to create your VPS at your cloud provider.
+Fill out an `.env` file like it's shown in [example.env](example.env).
 
-Compile the binary, move it to your VPS, login, run it and remove it.
+Note: Don't forget to generate an SSH keys pair on your **local machine**.
+```
+ssh-keygen -t ed25519 -f /home/<local_username>/.ssh/<key_name> -C "<your_comment>"
+```
+
+Restrict access to the keys.
+```
+chmod 400 ~/.ssh/<key_name>.pub ~/.ssh/<key_name>
+```
+
+The SSH public key should be inside the `~/.ssh/<key_name>.pub` file. The string should be in the format `[type] [key] [comment]`. Supply this key to the `.env` file.
+
+Compile the binary, move the `.env` file and the binary to your VPS, login, execute the binary, remove the files and reboot.
 ```
 make
-scp bin/vps-setup root@xx.xxx.xxxx.xxxx:
+scp .env bin/vps-setup root@xx.xxx.xxxx.xxxx:
 ssh root@xx.xxx.xxxx.xxxx
 ./vps-setup
-rm vps-setup
+rm .env vps-setup
+reboot
 ```
 
-The script will guide you trough the process, ask you to provide input. It will install all the necessary software and configure the machine.
+After the reboot you should be able to login to you VPS by using:
+```
+ssh -p <port> <remote_username>@xx.xxx.xxxx.xxxx
+```
 
 
-## Post Instalation Steps - Configure SSH Key-Based Authentication
+## Post Instalation Steps 
 
-In order to make the login process to your remote machine more streamlined we need to make some changes
+In order to make the login process to your remote machine more streamlined you need to make some minor changes on your **local machine**.
 
 
-#### Configure SSH Locally
-
-**ON YOUR LOCAL MACHINE** edit your local `~/.ssh/config` file and add this content to it.
+Edit your local `~/.ssh/config` file and append this content to it.
 ```
 Host <remote_host>
 Hostname xxx.xx.xx.xx
@@ -78,32 +92,4 @@ Restrict access to config file.
 chmod 600 ~/.ssh/config
 ```
 
-Generate private and public key. When asked supply the path where you want them to be saved which will be `/home/<local_username>/.ssh/<key_name>`.
-```
-ssh-keygen -t ed25519 -C "<your_comment>"
-```
-
-Restrict access to the keys.
-```
-chmod 400 ~/.ssh/<key_name>.pub ~/.ssh/<key_name>
-```
-
-Push the public key to the remote server. This will still ask for user password.
-```
-ssh-copy-id -i ~/.ssh/<key_name>.pub -p <port> <remote_username>@xxx.xx.xxx.xx
-```
-
-If you are able to connect with the command `ssh <remote_host>` then you can procede to finish the SSH hardening of the remote machine.
-
-
-#### Disabe Password Authentication and Root Login on the Remote Server
-
-Login to the **REMOTE** machine, open the `/etc/ssh/sshd_config.d/harden.conf` file and comment out the rules inside to disable the root login altogether, restart the `ssh` service for changes to take effect. You can also safely upgrade the software and reboot.
-```
-ssh <remote_host>
-sudo nano /etc/ssh/sshd_config.d/harden.conf
-sudo systemctl daemon-reload
-sudo systemctl restart ssh
-sysupdate
-sudo reboot
-```
+Now you should be able to login to your VPS by simply using `ssh <remote_host>`.
