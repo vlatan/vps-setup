@@ -3,10 +3,8 @@ package setup
 import (
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
@@ -176,15 +174,7 @@ func (b *Bash) FormatBashrc() error {
 // by creating custom aliases and prompt.
 func (s *Setup) FormatBash() error {
 
-	prompt := "Do you want to format bash? [y/N]: "
-	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, s.Scanner))
-	if !slices.Contains([]string{"yes", "y"}, start) {
-		return nil
-	}
-
 	fmt.Println("Formating the bash prompt...")
-
 	bash := NewBash(s.Home, s.Uid, s.Gid)
 	callables := []func() error{
 		bash.CreateAliases,

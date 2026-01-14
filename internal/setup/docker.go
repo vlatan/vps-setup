@@ -4,27 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
-	"slices"
 	"strings"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // InstallDocker installs and configures Docker
 func (s *Setup) InstallDocker() error {
 
-	prompt := "Do you want to install Docker? [y/N]: "
-	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, s.Scanner))
-	if !slices.Contains([]string{"yes", "y"}, start) {
-		return nil
-	}
-
-	fmt.Println("Setting up Docker...")
-
 	// Install using the APT repository
 	// https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+	fmt.Println("Setting up Docker...")
 
 	// Add Docker's official GPG key
 	cmds := [][]string{

@@ -2,22 +2,13 @@ package setup
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // InstallFail2Ban installs and configures Fail2Ban
 func (s *Setup) InstallFail2Ban() error {
-
-	prompt := "Do you want to install Fail2Ban? [y/N]: "
-	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, s.Scanner))
-	if !slices.Contains([]string{"yes", "y"}, start) {
-		return nil
-	}
 
 	fmt.Println("Setting up Fail2Ban...")
 	cmd := utils.Command("apt-get", "install", "-y", "fail2ban")

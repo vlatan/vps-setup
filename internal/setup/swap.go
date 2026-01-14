@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
@@ -14,7 +13,20 @@ import (
 // the swap is going to begin to be utilized.
 func (s *Setup) ChangeSwappiness() error {
 
-	s.setSwappiness()
+	// Helper function to check if the swappiness value is valid
+	valid := func(s string) bool {
+		n, err := strconv.Atoi(s)
+		if err != nil {
+			return false
+		}
+		return n >= 0 && n <= 100
+	}
+
+	// Check if the swappiness is valid
+	if valid(s.Swappiness) {
+		return fmt.Errorf("invalid swappiness: %s", s.Swappiness)
+	}
+
 	fmt.Println("Setting up the swappiness...")
 
 	// Write to the file
@@ -28,39 +40,4 @@ func (s *Setup) ChangeSwappiness() error {
 	confPath := filepath.Join(s.Etc.Name(), name)
 	cmd := utils.Command("sysctl", "-p", confPath)
 	return cmd.Run()
-}
-
-// setSwappiness sets the swappiness value to the setup struct
-func (s *Setup) setSwappiness() {
-
-	// Helper function to check if the swappiness input is valid
-	valid := func(s string) bool {
-		n, err := strconv.Atoi(s)
-		if err != nil {
-			return false
-		}
-		return n >= 0 && n <= 100
-	}
-
-	// Check if a valid swappiness value is already set
-	if valid(s.Swappiness) {
-		return
-	}
-
-	prompt := "Provide system swappiness value 0-100 [20]: "
-	prompt = colors.Yellow(prompt)
-
-	for { // Keep asking the question if swappiness is invalid
-		s.Swappiness = utils.AskQuestion(prompt, s.Scanner)
-
-		// If empty response provide default value
-		if s.Swappiness == "" {
-			s.Swappiness = "20"
-			break
-		}
-
-		if valid(s.Swappiness) {
-			break
-		}
-	}
 }

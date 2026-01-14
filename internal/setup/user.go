@@ -1,6 +1,7 @@
 package setup
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -8,9 +9,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	"github.com/vlatan/vps-setup/internal/colors"
-	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // AddUser adds new user and makes that user sudoer.
@@ -18,27 +16,15 @@ import (
 // namely s.Username and s.Home.
 func (s *Setup) AddUser() error {
 
-	prompt := colors.Yellow("Provide username: ")
-	for {
-		// Check for env var username first
-		if s.Username != "" {
-			break
-		}
-		s.Username = utils.AskQuestion(prompt, s.Scanner)
+	if s.Username == "" || s.Password == "" {
+		return errors.New("no username and/or password found")
 	}
 
-	var cmds []*exec.Cmd
-	if s.Password != "" {
-		cmd1 := exec.Command("adduser", "--gecos", "", "--disabled-password", s.Username)
-		cmd2 := exec.Command("chpasswd")
-		cmd2.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", s.Username, s.Password))
-		cmds = append(cmds, cmd1, cmd2)
-	} else {
-		cmds = append(cmds, exec.Command("adduser", "--gecos", "", s.Username))
-	}
-
-	// Add user to sudo group, make them sudoer
-	cmds = append(cmds, exec.Command("adduser", s.Username, "sudo"))
+	cmd1 := exec.Command("adduser", "--gecos", "", "--disabled-password", s.Username)
+	cmd2 := exec.Command("chpasswd")
+	cmd2.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", s.Username, s.Password))
+	cmd3 := exec.Command("adduser", s.Username, "sudo")
+	cmds := []*exec.Cmd{cmd1, cmd2, cmd3}
 
 	fmt.Println("Adding new user...")
 	for _, cmd := range cmds {

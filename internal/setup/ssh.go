@@ -1,12 +1,12 @@
 package setup
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
@@ -15,9 +15,14 @@ import (
 // namely assign s.SSHPort and optionally s.SSHPubKey
 func (s *Setup) HardenSSH() error {
 
-	s.setSSHPort()
-	s.setSSHPubKey()
+	if !validPort(s.SSHPort) || !validKey(s.SSHPubKey) {
+		return errors.New("invalid SSH port and/or public key")
+	}
+
 	fmt.Println("Hardening SSH access...")
+	if err := s.addSSHPubKey(); err != nil {
+		return err
+	}
 
 	hardenContent := []string{
 		"Port " + s.SSHPort,
@@ -25,24 +30,11 @@ func (s *Setup) HardenSSH() error {
 		"PermitRootLogin no",
 		"PermitEmptyPasswords no",
 		"AllowUsers " + s.Username,
+		"UsePAM no",
+		"PasswordAuthentication no",
+		"KbdInteractiveAuthentication no",
+		"AuthenticationMethods publickey",
 	}
-
-	pound := "# "
-	if s.SSHPubKey != "" {
-		pound = ""
-		if err := s.addSSHPubKey(); err != nil {
-			return err
-		}
-	}
-
-	rest := []string{
-		pound + "UsePAM no",
-		pound + "PasswordAuthentication no",
-		pound + "KbdInteractiveAuthentication no",
-		pound + "AuthenticationMethods publickey",
-	}
-
-	hardenContent = append(hardenContent, rest...)
 
 	// Write to file
 	name := "ssh/sshd_config.d/harden.conf"
@@ -66,68 +58,6 @@ func (s *Setup) HardenSSH() error {
 	}
 
 	return nil
-}
-
-func (s *Setup) setSSHPort() {
-
-	// Helper function to check if the port input is valid
-	valid := func(s string) bool {
-		n, err := strconv.Atoi(s)
-		if err != nil {
-			return false
-		}
-		return n >= 0 && n <= 65535
-	}
-
-	// Check if a valid SSH port value is already set
-	if valid(s.SSHPort) {
-		return
-	}
-
-	prompt := colors.Yellow("Provide SSH port [22]: ")
-	for { // Keep asking the question if SSH port is invalid
-		s.SSHPort = utils.AskQuestion(prompt, s.Scanner)
-
-		// If empty response provide default value
-		if s.SSHPort == "" {
-			s.SSHPort = "22"
-			break
-		}
-
-		if valid(s.SSHPort) {
-			break
-		}
-	}
-}
-
-// setSSHPubKey sets the SSH public key value to the setup struct
-func (s *Setup) setSSHPubKey() {
-
-	// Helper function to check if the SSH public key input is valid
-	valid := func(s string) bool {
-		parts := strings.Split(s, " ")
-		return len(parts) >= 2
-	}
-
-	// Check if a valid SSH public key value is already set
-	if valid(s.SSHPubKey) {
-		return
-	}
-
-	prompt := colors.Yellow("Provide SSH public key [optional]: ")
-	for { // Keep asking the question if SSH public key is invalid
-		s.SSHPubKey = utils.AskQuestion(prompt, s.Scanner)
-
-		// If empty response skip
-		if s.SSHPubKey == "" {
-			break
-		}
-
-		if valid(s.SSHPubKey) {
-			break
-		}
-	}
-
 }
 
 // addSSHPubKey writes an SSH public key to user's authorized_keys file
@@ -154,4 +84,17 @@ func (s *Setup) addSSHPubKey() error {
 
 	// Change ownership of the authorized_keys
 	return s.Home.Chown(authKeysFile, s.Uid, s.Gid)
+}
+
+func validPort(port string) bool {
+	n, err := strconv.Atoi(port)
+	if err != nil {
+		return false
+	}
+	return n >= 0 && n <= 65535
+}
+
+func validKey(key string) bool {
+	parts := strings.Split(key, " ")
+	return len(parts) >= 2
 }

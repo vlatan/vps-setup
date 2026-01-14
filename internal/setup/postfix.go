@@ -3,71 +3,29 @@ package setup
 import (
 	"fmt"
 	"path/filepath"
-	"slices"
 	"strings"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // SetupPostfix installs Postfix and sets up SMTP relay
 func (s *Setup) SetupPostfix() error {
 
-	prompt := "Do you want to setup Postfix SMTP relay? [y/N]: "
-	prompt = colors.Yellow(prompt)
-	start := strings.ToLower(utils.AskQuestion(prompt, s.Scanner))
-	if !slices.Contains([]string{"yes", "y"}, start) {
-		return nil
+	needed := map[string]string{
+		"postfix mailname": s.PostfixMailname,
+		"smtp host":        s.SMTPHost,
+		"smtp port":        s.SMTPPort,
+		"smtp username":    s.SMTPUsername,
+		"smtp password":    s.SMTPPassword,
 	}
 
-	for {
-		if s.PostfixMailname != "" {
-			break
-		}
-		s.PostfixMailname = utils.AskQuestion(
-			"MAILNAME (domain): ",
-			s.Scanner,
-		)
-	}
-
-	for {
-		if s.SMTPHost != "" {
-			break
-		}
-		s.SMTPHost = utils.AskQuestion("SMTP_HOST: ", s.Scanner)
-	}
-
-	for {
-		if s.SMTPPort != "" {
-			break
-		}
-		s.SMTPPort = utils.AskQuestion("SMTP_PORT: ", s.Scanner)
-	}
-
-	for {
-		if s.SMTPUsername != "" {
-			break
-		}
-		var err error
-		s.SMTPUsername, err = utils.AskPassword("SMTP_USERNAME: ")
-		if err != nil {
-			return err
-		}
-	}
-
-	for {
-		if s.SMTPPassword != "" {
-			break
-		}
-		var err error
-		s.SMTPPassword, err = utils.AskPassword("SMTP_PASSWORD: ")
-		if err != nil {
-			return err
+	for key, value := range needed {
+		if value == "" {
+			return fmt.Errorf("%s not found", key)
 		}
 	}
 
 	fmt.Println("Setting up Postfix SMTP relay...")
-
 	stdins := []string{
 		fmt.Sprintf("postfix postfix/mailname string %s\n", s.PostfixMailname),
 		"postfix postfix/main_mailer_type string 'Internet Site'\n",

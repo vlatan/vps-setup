@@ -1,26 +1,23 @@
 package setup
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
 
-	"github.com/vlatan/vps-setup/internal/colors"
 	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // SetupGitRepo sets up a bare git repo
 func (s *Setup) SetupGitRepo() error {
 
-	prompt := "Provide Git repo name [optiona]: "
-	prompt = colors.Yellow(prompt)
-	checkoutDirName := utils.AskQuestion(prompt, s.Scanner)
-
-	if checkoutDirName == "" {
-		return nil
+	if s.GitRepoName == "" {
+		return errors.New("git repo name not found")
 	}
 
 	fmt.Println("Setting up Git repo...")
+	checkoutDirName := s.GitRepoName
 
 	// Create the checkout dir
 	if err := s.Home.MkdirAll(checkoutDirName, 0755); err != nil {
