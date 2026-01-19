@@ -87,7 +87,7 @@ func (s *Setup) SetupPostfix() error {
 	}
 
 	for _, conf := range postConfs {
-		cmd = utils.Command("postconf", "-e", fmt.Sprintf("%q", conf))
+		cmd = utils.Command("postconf", "-e", conf)
 		if err := cmd.Run(); err != nil {
 			return err
 		}
