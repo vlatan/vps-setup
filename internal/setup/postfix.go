@@ -84,7 +84,7 @@ func (s *Setup) SetupPostfix() error {
 
 	// Configure SMTP relay settings
 	postConfs := []string{
-		"mydestination = localhost",
+		"mydestination = $myhostname, localhost.localdomain, localhost",
 		fmt.Sprintf("relayhost = [%s]:%s", s.SMTPHost, s.SMTPPort),
 		"smtp_sasl_auth_enable = yes",
 		"smtp_sasl_security_options = noanonymous",
