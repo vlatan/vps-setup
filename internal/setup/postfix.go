@@ -25,10 +25,12 @@ func (s *Setup) SetupPostfix() error {
 		}
 	}
 
+	// Use Satellite system - it relays everything and doesn't treat domain as local
 	fmt.Println("Setting up Postfix SMTP relay...")
 	stdins := []string{
 		fmt.Sprintf("postfix postfix/mailname string %s\n", s.PostfixMailname),
-		"postfix postfix/main_mailer_type string 'Internet Site'\n",
+		"postfix postfix/main_mailer_type string 'Satellite system'\n",
+		fmt.Sprintf("postfix postfix/relayhost string [%s]:%s\n", s.SMTPHost, s.SMTPPort),
 	}
 
 	for _, stdin := range stdins {
@@ -53,7 +55,13 @@ func (s *Setup) SetupPostfix() error {
 		return err
 	}
 
-	// Write to the file
+	// Create mailutils config to use correct email domain
+	mailutilsConf := fmt.Sprintf("address { email-domain %s; };", s.PostfixMailname)
+	if err := s.Etc.WriteFile("mailutils.conf", []byte(mailutilsConf), 0644); err != nil {
+		return err
+	}
+
+	// Create sassl password file
 	name := "postfix/sasl/sasl_passwd"
 	data := fmt.Sprintf(
 		"[%s]:%s %s:%s",
@@ -74,8 +82,9 @@ func (s *Setup) SetupPostfix() error {
 		return err
 	}
 
+	// Configure SMTP relay settings
 	postConfs := []string{
-		fmt.Sprintf("myhostname = %s", s.PostfixMailname),
+		"mydestination = localhost",
 		fmt.Sprintf("relayhost = [%s]:%s", s.SMTPHost, s.SMTPPort),
 		"smtp_sasl_auth_enable = yes",
 		"smtp_sasl_security_options = noanonymous",
