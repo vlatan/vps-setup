@@ -67,6 +67,7 @@ func (s *Setup) SetupPostfix() error {
 		"[%s]:%s %s:%s",
 		s.SMTPHost, s.SMTPPort, s.SMTPUsername, s.SMTPPassword,
 	)
+
 	if err := utils.WriteFile(s.Etc, name, []byte(data)); err != nil {
 		return err
 	}

@@ -31,7 +31,7 @@ func (s *Setup) SetupFirewall() error {
 
 	// Enforce IPV6 firewall rules
 	data = bytes.ReplaceAll(data, []byte("IPV6=no"), []byte("IPV6=yes"))
-	if err := utils.WriteFile(s.Etc, name, data); err != nil {
+	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
 

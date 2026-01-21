@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 type Bash struct {
@@ -64,7 +62,7 @@ func (b *Bash) CreateAliases() error {
 	}
 
 	data := []byte(strings.Join(aliasesContent, "\n") + "\n")
-	if err := utils.WriteFile(b.Home, b.Aliases, data); err != nil {
+	if err := b.Home.WriteFile(b.Aliases, data, 0644); err != nil {
 		return err
 	}
 
@@ -114,7 +112,7 @@ func (b *Bash) CreatePrompt() error {
 	}
 
 	data := []byte(strings.Join(promptContent, "\n") + "\n")
-	if err := utils.WriteFile(b.Home, b.Prompt, data); err != nil {
+	if err := b.Home.WriteFile(b.Prompt, data, 0644); err != nil {
 		return err
 	}
 
