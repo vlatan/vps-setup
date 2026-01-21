@@ -29,10 +29,15 @@ func (s *Setup) ChangeSwappiness() error {
 
 	fmt.Println("Setting up the swappiness...")
 
-	// Write to the file
+	// Make parent directories
 	name := "sysctl.d/99-my-swappiness.conf"
+	if err := s.Etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to the file
 	data := fmt.Appendf([]byte{}, "vm.swappiness = %s\n", s.Swappiness)
-	if err := utils.WriteFile(s.Etc, name, data); err != nil {
+	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
 

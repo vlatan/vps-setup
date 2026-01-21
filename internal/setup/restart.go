@@ -2,6 +2,7 @@ package setup
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/vlatan/vps-setup/internal/utils"
 )
@@ -12,10 +13,15 @@ import (
 func (s *Setup) AutoRestart() error {
 	fmt.Println("Seting up services autorestart...")
 
-	// Write to file
+	// Make parent directories
 	name := "needrestart/conf.d/no-prompt.conf"
+	if err := s.Etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to file
 	data := []byte("$nrconf{restart} = 'a';\n")
-	if err := utils.WriteFile(s.Etc, name, data); err != nil {
+	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
 

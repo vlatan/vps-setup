@@ -61,26 +61,35 @@ func (s *Setup) SetupPostfix() error {
 		return err
 	}
 
-	// Create sassl password file
+	// Make parent directories
 	name := "postfix/sasl/sasl_passwd"
+	if err := s.Etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Data for the sasl_passwd file
 	data := fmt.Sprintf(
 		"[%s]:%s %s:%s",
 		s.SMTPHost, s.SMTPPort, s.SMTPUsername, s.SMTPPassword,
 	)
 
-	if err := utils.WriteFile(s.Etc, name, []byte(data)); err != nil {
+	// Create sasl_passwd file
+	if err := s.Etc.WriteFile(name, []byte(data), 0644); err != nil {
 		return err
 	}
 
-	saslPaswdFile := filepath.Join(s.Etc.Name(), name)
-	cmd = utils.Command("postmap", saslPaswdFile)
+	// Generate sasl_passwd.db file
+	absName := filepath.Join(s.Etc.Name(), name)
+	cmd = utils.Command("postmap", absName)
 	if err := cmd.Run(); err != nil {
 		return err
 	}
 
-	cmd = utils.Command("chmod", "0600", saslPaswdFile, saslPaswdFile+".db")
-	if err := cmd.Run(); err != nil {
-		return err
+	// Protect the sasl_passwd files
+	for _, file := range []string{name, name + ".db"} {
+		if err := s.Etc.Chmod(file, 0600); err != nil {
+			return err
+		}
 	}
 
 	// Configure SMTP relay settings
@@ -89,7 +98,7 @@ func (s *Setup) SetupPostfix() error {
 		fmt.Sprintf("relayhost = [%s]:%s", s.SMTPHost, s.SMTPPort),
 		"smtp_sasl_auth_enable = yes",
 		"smtp_sasl_security_options = noanonymous",
-		fmt.Sprintf("smtp_sasl_password_maps = hash:%s", saslPaswdFile),
+		fmt.Sprintf("smtp_sasl_password_maps = hash:%s", absName),
 		"smtp_use_tls = yes",
 		"smtp_tls_security_level = encrypt",
 		"smtp_tls_note_starttls_offer = yes",
