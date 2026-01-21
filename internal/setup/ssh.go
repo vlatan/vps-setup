@@ -36,10 +36,15 @@ func (s *Setup) HardenSSH() error {
 		"AuthenticationMethods publickey",
 	}
 
-	// Write to file
+	// Make parent directories
 	name := "ssh/sshd_config.d/harden.conf"
+	if err := s.Etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to file
 	data := []byte(strings.Join(hardenContent, "\n") + "\n")
-	if err := utils.WriteFile(s.Etc, name, data); err != nil {
+	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
 
