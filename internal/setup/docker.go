@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/vlatan/vps-setup/internal/utils"
@@ -112,10 +113,15 @@ func (s *Setup) InstallDocker() error {
 		return err
 	}
 
-	// Write to the file
+	// Make parent directories
 	name := "docker/daemon.json"
+	if err := s.Etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to the file
 	data := append(jsonData, '\n')
-	if err := utils.WriteFile(s.Etc, name, data); err != nil {
+	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
 
@@ -136,10 +142,15 @@ func (s *Setup) InstallDocker() error {
 		"& stop",
 	}
 
-	// Write to the file
+	// Make parent directories
 	name = "rsyslog.d/40-docker.conf"
+	if err := s.Etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to the file
 	data = []byte(strings.Join(rsyslogConf, "\n") + "\n")
-	if err := utils.WriteFile(s.Etc, name, data); err != nil {
+	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
 
@@ -159,10 +170,15 @@ func (s *Setup) InstallDocker() error {
 		"}",
 	}
 
-	// Write to the file
+	// Make parent directories
 	name = "logrotate.d/docker"
+	if err := s.Etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to the file
 	data = []byte(strings.Join(logrotateConf, "\n") + "\n")
-	if err := utils.WriteFile(s.Etc, name, data); err != nil {
+	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
 

@@ -2,6 +2,7 @@ package setup
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/vlatan/vps-setup/internal/utils"
@@ -32,10 +33,15 @@ func (s *Setup) InstallFail2Ban() error {
 		fmt.Sprintf("port = %s", s.SSHPort),
 	}
 
-	// Write to the file
+	// Make parent directories
 	name := "fail2ban/jail.local"
+	if err := s.Etc.MkdirAll(filepath.Dir(name), 0755); err != nil {
+		return err
+	}
+
+	// Write to the file
 	data := []byte(strings.Join(content, "\n") + "\n")
-	if err := utils.WriteFile(s.Etc, name, data); err != nil {
+	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
 
