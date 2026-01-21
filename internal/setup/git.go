@@ -50,7 +50,7 @@ func (s *Setup) SetupGitRepo() error {
 
 	hookFile := filepath.Join(repoDirName, "hooks", "post-receive")
 	data := []byte(strings.Join(hookContent, "\n") + "\n")
-	if err := utils.WriteFile(s.Home, hookFile, data); err != nil {
+	if err := s.Home.WriteFile(hookFile, data, 0644); err != nil {
 		return err
 	}
 
