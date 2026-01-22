@@ -45,20 +45,29 @@ func (b *Bash) CreateAliases() error {
 	build := "docker compose up --pull=always --build --detach"
 	down := strings.Join(downContent, " && ")
 
+	workerLogs := "sudo tail -f /var/log/containers/docker-video-store-worker.log | cut -d' ' -f4-"
+	backupLogs := "sudo tail -f /var/log/containers/docker-video-store-backup.log | cut -d' ' -f4-"
+
 	aliasesContent := []string{
-		"# update the repos and upgrade",
+		"# Update the repos and upgrade",
 		fmt.Sprintf("alias sysupdate=%q", update),
 		"",
-		"# list files/folders",
+		"# List files/folders",
 		"alias ll='ls -lha'",
 		"",
-		"# pull images, build and run the containers in background",
+		"# Pull images, build and run the containers in background",
 		fmt.Sprintf("alias build=%q", build),
 		"",
-		"# bring down the running containers",
-		"# remove dangling images",
-		"# remove orphan containers",
+		"# Bring down the running containers",
+		"# Remove dangling images",
+		"# Remove orphan containers",
 		fmt.Sprintf("alias down=%q", down),
+		"",
+		"# Tail worker logs",
+		fmt.Sprintf("alias workerlogs=%q", workerLogs),
+		"",
+		"# Tail backup logs",
+		fmt.Sprintf("alias backuplogs=%q", backupLogs),
 	}
 
 	data := []byte(strings.Join(aliasesContent, "\n") + "\n")
