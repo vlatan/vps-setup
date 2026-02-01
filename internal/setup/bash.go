@@ -138,6 +138,11 @@ func (b *Bash) CreatePrompt() error {
 func (b *Bash) FormatBashrc() error {
 
 	bashrcContent := []string{
+		"# check if reboot is required",
+		"f [ -f /var/run/reboot-required ]; then",
+		"    echo \"Reboot is required\"",
+		"fi",
+		"",
 		"# use aliases from file if any",
 		"if [ -f ~/.bash_aliases ]; then",
 		"    . ~/.bash_aliases",
