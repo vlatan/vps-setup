@@ -82,13 +82,14 @@ func (s *Setup) addSSHPubKey() error {
 		return err
 	}
 
-	// Change ownership of the .ssh directory
-	if err := s.Home.Chown(sshDir, s.Uid, s.Gid); err != nil {
-		return err
+	// Change the ownership
+	for _, path := range []string{authKeysFile, sshDir} {
+		if err := s.Home.Chown(path, s.Uid, s.Gid); err != nil {
+			return err
+		}
 	}
 
-	// Change ownership of the authorized_keys
-	return s.Home.Chown(authKeysFile, s.Uid, s.Gid)
+	return nil
 }
 
 func validPort(port string) bool {

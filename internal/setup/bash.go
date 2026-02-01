@@ -142,7 +142,7 @@ func (b *Bash) FormatBashrc() error {
 
 	bashrcContent := []string{
 		"# check if reboot is required",
-		"f [ -f /var/run/reboot-required ]; then",
+		"if [ -f /var/run/reboot-required ]; then",
 		"    echo \"Reboot is required\"",
 		"fi",
 		"",
