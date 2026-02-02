@@ -45,9 +45,6 @@ func (b *Bash) CreateAliases() error {
 	build := "docker compose up --pull=always --build --detach"
 	down := strings.Join(downContent, " && ")
 
-	workerLogs := "sudo tail -f /var/log/containers/docker-video-store-worker.log | cut -d' ' -f4-"
-	backupLogs := "sudo tail -f /var/log/containers/docker-video-store-backup.log | cut -d' ' -f4-"
-
 	aliasesContent := []string{
 		"# Update the repos and upgrade",
 		fmt.Sprintf("alias sysupdate=%q", update),
@@ -62,12 +59,6 @@ func (b *Bash) CreateAliases() error {
 		"# Remove dangling images",
 		"# Remove orphan containers",
 		fmt.Sprintf("alias down=%q", down),
-		"",
-		"# Tail worker logs",
-		fmt.Sprintf("alias workerlogs=%q", workerLogs),
-		"",
-		"# Tail backup logs",
-		fmt.Sprintf("alias backuplogs=%q", backupLogs),
 	}
 
 	data := []byte(strings.Join(aliasesContent, "\n") + "\n")
