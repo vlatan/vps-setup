@@ -26,6 +26,10 @@ func (s *Setup) GetJobs() []Job {
 			Callable: s.ChangeSwappiness,
 		},
 		{
+			Info:     "Create swap",
+			Callable: s.CreateSwap,
+		},
+		{
 			Info:     "Attach Ubuntu Pro [optional]",
 			Callable: s.AttachUbuntuPro,
 		},
