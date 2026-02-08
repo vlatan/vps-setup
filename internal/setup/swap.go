@@ -89,7 +89,41 @@ func (s *Setup) CreateSwap() error {
 		return nil
 	}
 
-	return enableSwap(s.SwapSizeMB, "/swapfile")
+	return s.enableSwap("/swapfile")
+}
+
+// enableSwap allocates swap to file and turns on the swap
+func (s *Setup) enableSwap(path string) error {
+	cmd := utils.Command("fallocate", "-l", fmt.Sprintf("%dM", s.SwapSizeMB), path)
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
+	if err := os.Chmod(path, 0600); err != nil {
+		return err
+	}
+
+	if err := utils.Command("mkswap", path).Run(); err != nil {
+		return err
+	}
+
+	if err := utils.Command("swapon", path).Run(); err != nil {
+		return err
+	}
+
+	// Make swap permanent by adding to /etc/fstab
+	f, err := s.Etc.OpenFile("fstab", os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	fstabEntry := fmt.Sprintf("%s none swap sw 0 0\n", path)
+	if _, err := f.WriteString(fstabEntry); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // getSwapDevices gets information about all the swap devices on the machine
@@ -117,22 +151,4 @@ func getSwapDevices() ([]SwapDevice, error) {
 		}
 	}
 	return devices, scanner.Err()
-}
-
-// enableSwap allocates swap to file and turns on the swap
-func enableSwap(sizeMB int, path string) error {
-	cmd := utils.Command("fallocate", "-l", fmt.Sprintf("%dM", sizeMB), path)
-	if err := cmd.Run(); err != nil {
-		return err
-	}
-
-	if err := os.Chmod(path, 0600); err != nil {
-		return err
-	}
-
-	if err := utils.Command("mkswap", path).Run(); err != nil {
-		return err
-	}
-
-	return utils.Command("swapon", path).Run()
 }
