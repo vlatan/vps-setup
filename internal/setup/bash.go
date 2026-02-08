@@ -42,7 +42,7 @@ func (b *Bash) CreateAliases() error {
 	}
 
 	update := strings.Join(updateContent, " && ")
-	build := "docker compose up --pull=always --build --detach"
+	build := "docker compose up --build --detach"
 	down := strings.Join(downContent, " && ")
 
 	aliasesContent := []string{
