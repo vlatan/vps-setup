@@ -32,6 +32,12 @@ func (s *Setup) Run() {
 
 	startTime := time.Now()
 
+	// Update the system
+	cmd := utils.Command("apt-get", "update")
+	if err := cmd.Run(); err != nil {
+		utils.Exit(err)
+	}
+
 	// Execute the jobs
 	if err := s.ProcessJobs(jobs); err != nil {
 		utils.Exit(err)

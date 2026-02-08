@@ -3,8 +3,6 @@ package setup
 import (
 	"fmt"
 	"path/filepath"
-
-	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // AutoRestart creates a new config file /etc/needrestart/conf.d/no-prompt.conf
@@ -22,11 +20,6 @@ func (s *Setup) AutoRestart() error {
 	// Write to file
 	data := []byte("$nrconf{restart} = 'a';\n")
 	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
-		return err
-	}
-
-	cmd := utils.Command("apt-get", "update")
-	if err := cmd.Run(); err != nil {
 		return err
 	}
 

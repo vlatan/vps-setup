@@ -3,7 +3,6 @@ package setup
 import (
 	"encoding/json"
 	"fmt"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -19,7 +18,6 @@ func (s *Setup) InstallDocker() error {
 
 	// Add Docker's official GPG key
 	cmds := [][]string{
-		{"apt-get", "update"},
 		{"apt-get", "install", "-y", "ca-certificates", "curl"},
 		{"install", "-m", "0755", "-d", "/etc/apt/keyrings"},
 		{
@@ -51,31 +49,31 @@ func (s *Setup) InstallDocker() error {
 	}
 
 	// We need the shell for the heredoc to work
-	cmd := exec.Command("/bin/bash", "-c", strings.Join(heredoc, "\n"))
+	cmd := utils.Command("/bin/bash", "-c", strings.Join(heredoc, "\n"))
 	if err := cmd.Run(); err != nil {
 		return err
 	}
 
-	// Install docker packages
-	cmds = [][]string{
-		{"apt-get", "update"},
-		{
-			"apt-get",
-			"install",
-			"-y",
-			"docker-ce",
-			"docker-ce-cli",
-			"containerd.io",
-			"docker-buildx-plugin",
-			"docker-compose-plugin",
-		},
+	// Refresh the package lists to include the packages from the new Docker repository
+	if err := utils.Command("apt-get", "update").Run(); err != nil {
+		return err
 	}
 
-	for _, cmdArgs := range cmds {
-		cmd := utils.Command(cmdArgs[0], cmdArgs[1:]...)
-		if err := cmd.Run(); err != nil {
-			return err
-		}
+	// Install docker packages
+	cmdArgs := []string{
+		"apt-get",
+		"install",
+		"-y",
+		"docker-ce",
+		"docker-ce-cli",
+		"containerd.io",
+		"docker-buildx-plugin",
+		"docker-compose-plugin",
+	}
+
+	cmd = utils.Command(cmdArgs[0], cmdArgs[1:]...)
+	if err := cmd.Run(); err != nil {
+		return err
 	}
 
 	// Manage Docker as a non-root user
@@ -91,7 +89,7 @@ func (s *Setup) InstallDocker() error {
 	}
 
 	// Add user to docker group
-	cmd = exec.Command("usermod", "-aG", "docker", s.Username)
+	cmd = utils.Command("usermod", "-aG", "docker", s.Username)
 	if err := cmd.Run(); err != nil {
 		return err
 	}

@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/vlatan/vps-setup/internal/utils"
 )
 
 // AddUser adds new user and makes that user sudoer.
@@ -20,10 +22,10 @@ func (s *Setup) AddUser() error {
 		return errors.New("no username and/or password found")
 	}
 
-	cmd1 := exec.Command("adduser", "--gecos", "", "--disabled-password", s.Username)
-	cmd2 := exec.Command("chpasswd")
+	cmd1 := utils.Command("adduser", "--gecos", "", "--disabled-password", s.Username)
+	cmd2 := utils.Command("chpasswd")
 	cmd2.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", s.Username, s.Password))
-	cmd3 := exec.Command("adduser", s.Username, "sudo")
+	cmd3 := utils.Command("adduser", s.Username, "sudo")
 	cmds := []*exec.Cmd{cmd1, cmd2, cmd3}
 
 	fmt.Println("Adding new user...")
