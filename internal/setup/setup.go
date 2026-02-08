@@ -15,7 +15,8 @@ import (
 type Setup struct {
 
 	// Env vars
-	Swappiness      string `env:"SWAPPINESS" envDefault:"20"`
+	Swappiness      int    `env:"SWAPPINESS" envDefault:"10"`
+	SwapSizeMB      int    `env:"SWAP_SIZE_MB" envDefault:"512"`
 	UbuntuProToken  string `env:"UBUNTU_PRO_TOKEN"`
 	Hostname        string `env:"HOSTNAME"`
 	Timezone        string `env:"TIMEZONE" envDefault:"UTC"`

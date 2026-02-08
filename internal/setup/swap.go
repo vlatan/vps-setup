@@ -3,7 +3,6 @@ package setup
 import (
 	"fmt"
 	"path/filepath"
-	"strconv"
 
 	"github.com/vlatan/vps-setup/internal/utils"
 )
@@ -13,18 +12,9 @@ import (
 // the swap is going to begin to be utilized.
 func (s *Setup) ChangeSwappiness() error {
 
-	// Helper function to check if the swappiness value is valid
-	valid := func(s string) bool {
-		n, err := strconv.Atoi(s)
-		if err != nil {
-			return false
-		}
-		return n >= 0 && n <= 100
-	}
-
 	// Check if the swappiness is valid
-	if !valid(s.Swappiness) {
-		return fmt.Errorf("invalid swappiness: %s", s.Swappiness)
+	if s.Swappiness >= 0 && s.Swappiness <= 100 {
+		return fmt.Errorf("invalid swappiness: %d", s.Swappiness)
 	}
 
 	fmt.Println("Setting up the swappiness...")
@@ -36,7 +26,7 @@ func (s *Setup) ChangeSwappiness() error {
 	}
 
 	// Write to the file
-	data := fmt.Appendf([]byte{}, "vm.swappiness = %s\n", s.Swappiness)
+	data := fmt.Appendf([]byte{}, "vm.swappiness = %d\n", s.Swappiness)
 	if err := s.Etc.WriteFile(name, data, 0644); err != nil {
 		return err
 	}
