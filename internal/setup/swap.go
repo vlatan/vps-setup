@@ -13,7 +13,7 @@ import (
 func (s *Setup) ChangeSwappiness() error {
 
 	// Check if the swappiness is valid
-	if s.Swappiness >= 0 && s.Swappiness <= 100 {
+	if s.Swappiness < 0 || s.Swappiness > 100 {
 		return fmt.Errorf("invalid swappiness: %d", s.Swappiness)
 	}
 
