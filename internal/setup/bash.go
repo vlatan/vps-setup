@@ -36,14 +36,15 @@ func (b *Bash) CreateAliases() error {
 		"sudo apt autoclean",
 	}
 
+	update := strings.Join(updateContent, " && ")
+	dcup := "docker compose up --detach --remove-orphans"
+
 	downContent := []string{
 		"docker compose down --remove-orphans",
 		"docker system prune --force",
 	}
 
-	update := strings.Join(updateContent, " && ")
-	build := "docker compose up --build --detach"
-	down := strings.Join(downContent, " && ")
+	dcdown := strings.Join(downContent, " && ")
 
 	aliasesContent := []string{
 		"# Update the repos and upgrade",
@@ -52,13 +53,14 @@ func (b *Bash) CreateAliases() error {
 		"# List files/folders",
 		"alias ll='ls -lha'",
 		"",
-		"# Pull images, build and run the containers in background",
-		fmt.Sprintf("alias build=%q", build),
+		"# Run the containers in background",
+		"# Remove orphan containers",
+		fmt.Sprintf("alias dcup=%q", dcup),
 		"",
 		"# Bring down the running containers",
-		"# Remove dangling images",
 		"# Remove orphan containers",
-		fmt.Sprintf("alias down=%q", down),
+		"# Remove dangling images",
+		fmt.Sprintf("alias dcdown=%q", dcdown),
 	}
 
 	data := []byte(strings.Join(aliasesContent, "\n") + "\n")
