@@ -157,6 +157,7 @@ func (s *Setup) InstallDocker() error {
 		"# consult 'man logrotate' for explanation",
 		"/var/log/containers/*.log {",
 		"    daily",
+		"    minsize 1M",
 		"    rotate 20",
 		"    missingok",
 		"    notifempty",
