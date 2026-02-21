@@ -26,7 +26,8 @@ func (s *Setup) AddUser() error {
 	cmd2 := utils.Command("chpasswd")
 	cmd2.Stdin = strings.NewReader(fmt.Sprintf("%s:%s", s.Username, s.Password))
 	cmd3 := utils.Command("adduser", s.Username, "sudo")
-	cmds := []*exec.Cmd{cmd1, cmd2, cmd3}
+	cmd4 := utils.Command("adduser", s.Username, "adm")
+	cmds := []*exec.Cmd{cmd1, cmd2, cmd3, cmd4}
 
 	fmt.Println("Adding new user...")
 	for _, cmd := range cmds {
